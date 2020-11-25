@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class ShowDto(
+data class TvShowDto(
     @SerializedName("id") var id: Int
 ) : Parcelable

@@ -1,26 +1,31 @@
 package com.otero.tvmazeapp.ui.home
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.otero.tvmazeapp.domain.usecase.GetShowByPageUseCase
+import com.otero.tvmazeapp.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val getShowByPage: GetShowByPageUseCase
-) : ViewModel() {
+    private val getShowByPage: GetShowByPageUseCase,
+    override val viewState: HomeViewState
+) : BaseViewModel<HomeViewState, HomeViewAction>() {
 
     init {
-        Log.d("HomeViewModel", "INIT")
+        viewState.action.postValue(HomeViewState.Action.ShowLoading)
+
         viewModelScope.launch {
-            Log.d("HomeViewModel", getShowByPage(1).data.toString())
+            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage(1).data))
         }
     }
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    override fun dispatchViewAction(viewAction: HomeViewAction) {
+        when (viewAction) {
+            is HomeViewAction.Paginate -> paginate(viewAction.page)
+        }
     }
-    val text: LiveData<String> = _text
+
+    private fun paginate(page: Int) {
+        Log.d("HomeViewModel", "Page")
+    }
 }

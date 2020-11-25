@@ -1,5 +1,5 @@
 package com.otero.tvmazeapp.domain.model
 
-data class ShowModel (
+data class TvShowModel (
     val id: Int
 )
