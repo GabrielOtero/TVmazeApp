@@ -15,17 +15,24 @@ class HomeViewModel(
         viewState.action.postValue(HomeViewState.Action.ShowLoading)
 
         viewModelScope.launch {
-            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage(1).data))
+            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage().data))
         }
     }
 
     override fun dispatchViewAction(viewAction: HomeViewAction) {
         when (viewAction) {
             is HomeViewAction.Paginate -> paginate(viewAction.page)
+            is HomeViewAction.CardClick -> cardClick(viewAction.id)
         }
     }
 
+    private fun cardClick(id: Int) {
+        Log.d("HomeViewModel", id.toString())
+    }
+
     private fun paginate(page: Int) {
-        Log.d("HomeViewModel", "Page")
+        viewModelScope.launch {
+            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage(page).data))
+        }
     }
 }

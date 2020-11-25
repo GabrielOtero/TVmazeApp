@@ -6,5 +6,5 @@ import retrofit2.http.Query
 
 interface TvMazeApi {
     @GET("shows")
-    suspend fun getShowsByPage(@Query("page") page: Int = 1): List<TvShowDto>
+    suspend fun getShowsByPage(@Query("page") page: Int = 0): List<TvShowDto>
 }
