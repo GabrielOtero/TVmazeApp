@@ -9,5 +9,6 @@ class HomeViewState {
     sealed class Action {
         object ShowLoading : Action()
         data class ShowTvShowList(val list: List<TvShowModel>?) : Action()
+        class GoToTvShowDetail(val id: Int) : Action()
     }
 }

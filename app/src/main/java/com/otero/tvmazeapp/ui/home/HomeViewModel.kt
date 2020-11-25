@@ -27,7 +27,7 @@ class HomeViewModel(
     }
 
     private fun cardClick(id: Int) {
-        Log.d("HomeViewModel", id.toString())
+        viewState.action.postValue(HomeViewState.Action.GoToTvShowDetail(id))
     }
 
     private fun paginate(page: Int) {

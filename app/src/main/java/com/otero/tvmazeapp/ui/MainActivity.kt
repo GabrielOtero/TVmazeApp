@@ -1,14 +1,15 @@
 package com.otero.tvmazeapp.ui
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.otero.tvmazeapp.R
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,5 +37,12 @@ class MainActivity : AppCompatActivity() {
 
     fun hideLoading() {
         progress_bar.visibility = GONE
+    }
+
+    fun goTo(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, fragment)
+        transaction.addToBackStack("asdf")
+        transaction.commit()
     }
 }
