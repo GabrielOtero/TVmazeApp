@@ -11,14 +11,15 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_fragment1_to_fragment2"
-            app:destination="@id/fragment_tv_show_detail" />
+            android:id="@+id/action_title_to_about"
+            app:destination="@id/fragment_tv_show_detail"/>
     </fragment>
 
     <fragment
         android:id="@+id/fragment_tv_show_detail"
         android:name="com.otero.tvmazeapp.ui.detail.TvShowDetailFragment"
-        tools:layout="@layout/tv_show_detail_fragment" />
+        tools:layout="@layout/tv_show_detail_fragment"
+        android:label="@string/tv_show_detail"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"

@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import com.otero.tvmazeapp.ui.MainActivity
-import com.otero.tvmazeapp.ui.detail.TvShowDetailFragment
+import com.otero.tvmazeapp.ui.detail.ID_KEY
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -56,7 +58,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun goToTvShowDetail(id: Int) {
-        (activity as MainActivity).goTo(TvShowDetailFragment.newInstance(id))
+        findNavController().navigate(R.id.action_title_to_about, bundleOf(Pair(ID_KEY, id)))
     }
 
     private fun showTvShowList(list: List<TvShowModel>?) {

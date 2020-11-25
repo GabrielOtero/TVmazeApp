@@ -1,6 +1,5 @@
 package com.otero.tvmazeapp.ui.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.otero.tvmazeapp.domain.usecase.GetShowByPageUseCase
 import com.otero.tvmazeapp.ui.base.BaseViewModel

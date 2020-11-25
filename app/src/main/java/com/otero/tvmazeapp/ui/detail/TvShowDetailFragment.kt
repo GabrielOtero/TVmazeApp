@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.otero.tvmazeapp.R
 
-const val ID_KEY = "id"
+const val ID_KEY = "tvShowId"
 
 class TvShowDetailFragment : Fragment() {
 
@@ -32,15 +32,5 @@ class TvShowDetailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(TvShowDetailViewModel::class.java)
-        // TODO: Use the ViewModel
     }
-
-    companion object {
-        fun newInstance(id: Int): TvShowDetailFragment {
-            val tvShowDetailFragment = TvShowDetailFragment()
-            tvShowDetailFragment.arguments = bundleOf(Pair(ID_KEY, id))
-            return tvShowDetailFragment
-        }
-    }
-
 }

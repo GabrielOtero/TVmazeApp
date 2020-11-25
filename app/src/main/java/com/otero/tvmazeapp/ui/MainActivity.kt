@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -37,12 +36,5 @@ class MainActivity : AppCompatActivity() {
 
     fun hideLoading() {
         progress_bar.visibility = GONE
-    }
-
-    fun goTo(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment, fragment)
-        transaction.addToBackStack("asdf")
-        transaction.commit()
     }
 }
