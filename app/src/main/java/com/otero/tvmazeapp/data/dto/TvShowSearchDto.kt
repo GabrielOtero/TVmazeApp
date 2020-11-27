@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class TvShowDto(
-    @SerializedName("id") val id: Int
+data class TvShowSearchDto(
+    @SerializedName("score") val score: Float,
+    @SerializedName("show") val show: TvShowDto
 ) : Parcelable

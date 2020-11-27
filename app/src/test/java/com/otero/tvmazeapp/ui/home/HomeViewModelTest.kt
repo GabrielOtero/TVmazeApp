@@ -4,7 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.domain.model.TvShowModel
-import com.otero.tvmazeapp.domain.usecase.GetShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.spyk
@@ -24,18 +25,18 @@ class HomeViewModelTest {
     @get:Rule
     val instantTask = InstantTaskExecutorRule()
 
-    private val getShowByPageUseCase = mockk<GetShowByPageUseCase>()
+    private val getShowByPageUseCase = mockk<GetTvShowByPageUseCase>()
+    private val getTvShowByTextUseCase = mockk<GetTvShowByTextUseCase>()
     private val viewState = spyk(HomeViewState())
 
     private val viewModel by lazy {
-        HomeViewModel(getShowByPageUseCase, viewState)
+        HomeViewModel(getShowByPageUseCase, getTvShowByTextUseCase, viewState)
     }
 
     @Before
     fun setup() {
         Dispatchers.setMain(Dispatchers.Unconfined)
     }
-
 
     @Test
     fun dispatchAction_paginate_actionTvShowList() = runBlockingTest {
@@ -63,9 +64,50 @@ class HomeViewModelTest {
         )
     }
 
+    @Test
+    fun dispatchAction_textSearchClick_emptyString_actionPaginate() = runBlockingTest {
+        val list = listOf(TvShowModel(1), TvShowModel(2))
+        prepareScenario(list)
+
+        viewModel.dispatchViewAction(HomeViewAction.TextSearchClick(""))
+
+        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.ShowTvShowList)
+        assertEquals(
+            list, (viewModel.viewState.action.value as HomeViewState.Action.ShowTvShowList).list
+        )
+    }
+
+    @Test
+    fun dispatchAction_textSearchClick_emptyResult_actionEmptyState() = runBlockingTest {
+        prepareScenario(emptyList())
+
+        viewModel.dispatchViewAction(HomeViewAction.TextSearchClick("asdfg"))
+
+        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.EmptyState)
+    }
+
+    @Test
+    fun dispatchAction_textSearchClick_actionTvShowList() = runBlockingTest {
+        val list = listOf(TvShowModel(1), TvShowModel(2))
+        prepareScenario(list)
+
+        viewModel.dispatchViewAction(HomeViewAction.TextSearchClick("asdfg"))
+
+        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.ShowTvShowListByText)
+        assertEquals(
+            list,
+            (viewModel.viewState.action.value as HomeViewState.Action.ShowTvShowListByText).list
+        )
+    }
 
     private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
         coEvery { getShowByPageUseCase(any()) } returns Resource(
+            status = Status.SUCCESS,
+            data = list,
+            message = null
+        )
+
+        coEvery { getTvShowByTextUseCase(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,
             message = null

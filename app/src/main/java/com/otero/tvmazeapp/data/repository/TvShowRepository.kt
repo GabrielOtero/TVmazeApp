@@ -4,5 +4,6 @@ import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.domain.model.TvShowModel
 
 interface TvShowRepository {
-    suspend fun getShowsByPage(page: Int = 0): Resource<List<TvShowModel>>
+    suspend fun getTvShowsByPage(page: Int = 0): Resource<List<TvShowModel>>
+    suspend fun getTvShowsByText(searchText: String): Resource<List<TvShowModel>>
 }

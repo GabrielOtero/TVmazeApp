@@ -12,6 +12,10 @@ android {
         unitTests.returnDefaultValues = true
     }
 
+    packagingOptions {
+        exclude 'META-INF/*'
+    }
+
     defaultConfig {
         applicationId "com.otero.tvmazeapp"
         minSdkVersion 21

@@ -7,10 +7,13 @@ import com.otero.tvmazeapp.data.TvMazeApi
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSourceImpl
 import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
+import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.repository.TvShowRepository
 import com.otero.tvmazeapp.data.repository.TvShowRepositoryImpl
-import com.otero.tvmazeapp.domain.usecase.GetShowByPage
-import com.otero.tvmazeapp.domain.usecase.GetShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByPage
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByText
 import com.otero.tvmazeapp.ui.home.HomeViewModel
 import com.otero.tvmazeapp.ui.home.HomeViewState
 import okhttp3.OkHttpClient
@@ -26,11 +29,19 @@ const val KOIN_RETROFIT = "KOIN_RETROFIT"
 @Suppress("RemoveExplicitTypeArguments", "USELESS_CAST")
 val tvMazeModule = module {
     viewModel {
-        HomeViewModel(get<GetShowByPageUseCase>(), get<HomeViewState>())
+        HomeViewModel(
+            get<GetTvShowByPageUseCase>(),
+            get<GetTvShowByTextUseCase>(),
+            get<HomeViewState>()
+        )
     }
 
     factory {
-        GetShowByPage(get<TvShowRepository>()) as GetShowByPageUseCase
+        GetTvShowByPage(get<TvShowRepository>()) as GetTvShowByPageUseCase
+    }
+
+    factory {
+        GetTvShowByText(get<TvShowRepository>()) as GetTvShowByTextUseCase
     }
 
     factory {
@@ -41,7 +52,8 @@ val tvMazeModule = module {
         TvShowRemoteDataSourceImpl(
             get<TvMazeApi>(),
             get<ResponseHandler>(),
-            get<TvShowDtoToTvShowModelMapper>()
+            get<TvShowDtoToTvShowModelMapper>(),
+            get<TvShowSearchDtoToTvShowModelMapper>()
         ) as TvShowRemoteDataSource
     }
 
@@ -51,6 +63,10 @@ val tvMazeModule = module {
 
     factory {
         TvShowDtoToTvShowModelMapper()
+    }
+
+    factory {
+        TvShowSearchDtoToTvShowModelMapper()
     }
 
     factory {

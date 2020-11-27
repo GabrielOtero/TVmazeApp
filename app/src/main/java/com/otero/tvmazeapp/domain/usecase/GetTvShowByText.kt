@@ -2,9 +2,8 @@ package com.otero.tvmazeapp.domain.usecase
 
 import com.otero.tvmazeapp.data.repository.TvShowRepository
 
-class GetShowByPage(
+class GetTvShowByText(
     private val tvShowRepository: TvShowRepository
-) : GetShowByPageUseCase {
-    override suspend fun invoke(page: Int) = tvShowRepository.getShowsByPage(page)
-
+) : GetTvShowByTextUseCase {
+    override suspend fun invoke(searchText: String) = tvShowRepository.getTvShowsByText(searchText)
 }

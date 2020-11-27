@@ -24,14 +24,6 @@ class TvShowAdapter(private val cardClickListener: (Int) -> Unit) :
         holder.bind(getItem(position), cardClickListener)
     }
 
-    override fun submitList(list: List<TvShowModel>?) {
-        list?.let{
-            val currentList = currentList.toMutableList()
-            currentList.addAll(it.asIterable())
-            super.submitList(currentList)
-        }
-    }
-
     class ParticipantRulesDiffcalback : DiffUtil.ItemCallback<TvShowModel>() {
         override fun areItemsTheSame(
             oldItem: TvShowModel,

@@ -1,12 +1,14 @@
 package com.otero.tvmazeapp.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.otero.tvmazeapp.domain.usecase.GetShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
 import com.otero.tvmazeapp.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val getShowByPage: GetShowByPageUseCase,
+    private val getTvShowByPage: GetTvShowByPageUseCase,
+    private val getTvShowByTextUseCase: GetTvShowByTextUseCase,
     override val viewState: HomeViewState
 ) : BaseViewModel<HomeViewState, HomeViewAction>() {
 
@@ -14,7 +16,7 @@ class HomeViewModel(
         viewState.action.postValue(HomeViewState.Action.ShowLoading)
 
         viewModelScope.launch {
-            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage().data))
+            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getTvShowByPage().data))
         }
     }
 
@@ -22,6 +24,24 @@ class HomeViewModel(
         when (viewAction) {
             is HomeViewAction.Paginate -> paginate(viewAction.page)
             is HomeViewAction.CardClick -> cardClick(viewAction.id)
+            is HomeViewAction.TextSearchClick -> textSearch(viewAction.textSearch)
+        }
+    }
+
+    private fun textSearch(textSearch: String) {
+        viewState.action.postValue(HomeViewState.Action.ClearList)
+
+        if (textSearch.isEmpty()) {
+            paginate(0)
+        } else {
+            viewModelScope.launch {
+                val result = getTvShowByTextUseCase(textSearch)
+                if (result.data.isNullOrEmpty()) {
+                    viewState.action.postValue(HomeViewState.Action.EmptyState)
+                } else {
+                    viewState.action.postValue(HomeViewState.Action.ShowTvShowListByText(result.data))
+                }
+            }
         }
     }
 
@@ -31,7 +51,8 @@ class HomeViewModel(
 
     private fun paginate(page: Int) {
         viewModelScope.launch {
-            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getShowByPage(page).data))
+            val result = getTvShowByPage(page)
+            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(result.data))
         }
     }
 }

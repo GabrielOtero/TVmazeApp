@@ -3,6 +3,8 @@ package com.otero.tvmazeapp.ui.home
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -17,10 +19,12 @@ import com.otero.tvmazeapp.ui.detail.ID_KEY
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), View.OnClickListener {
 
     private val homeViewModel by viewModel<HomeViewModel>()
     var loadingRecyclerView = false
+    var shouldPaginate = true
+    var page: Int = 1
 
     private val listAdapter by lazy {
         TvShowAdapter {
@@ -41,20 +45,49 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tv_show_list.adapter = listAdapter
-        tv_show_list.addOnScrollListener(onScrollListener())
+        tv_show_list.addOnScrollListener(onScrollListener {
+            homeViewModel.dispatchViewAction(HomeViewAction.Paginate(it))
+        })
+        search_button.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View?) {
+        when (view) {
+            search_button -> searchByText(search_serie_by_name.text.toString())
+        }
     }
 
     private fun observeViewState() {
         homeViewModel.viewState.action.observe(
-                viewLifecycleOwner,
-                Observer {
-                    when (it) {
-                        is HomeViewState.Action.ShowLoading -> (activity as MainActivity).showLoading()
-                        is HomeViewState.Action.ShowTvShowList -> showTvShowList(it.list)
-                        is HomeViewState.Action.GoToTvShowDetail -> goToTvShowDetail(it.id)
-                    }
+            viewLifecycleOwner,
+            Observer {
+                when (it) {
+                    is HomeViewState.Action.ShowLoading -> (activity as MainActivity).showLoading()
+                    is HomeViewState.Action.ShowTvShowList -> showTvShowList(it.list)
+                    is HomeViewState.Action.GoToTvShowDetail -> goToTvShowDetail(it.id)
+                    is HomeViewState.Action.EmptyState -> showEmptyState()
+                    is HomeViewState.Action.ClearList -> clearList()
+                    is HomeViewState.Action.ShowTvShowListByText -> showTvShowListByText(it.list)
                 }
+            }
         )
+    }
+
+    private fun showTvShowListByText(list: List<TvShowModel>?) {
+        (activity as MainActivity).hideLoading()
+        loadingRecyclerView = true
+        listAdapter.submitList(list)
+    }
+
+    private fun clearList() {
+        (activity as MainActivity).showLoading()
+        listAdapter.submitList(emptyList())
+        page = 1
+    }
+
+    private fun showEmptyState() {
+        (activity as MainActivity).hideLoading()
+        empty_state_label.visibility = VISIBLE
     }
 
     private fun goToTvShowDetail(id: Int) {
@@ -64,25 +97,34 @@ class HomeFragment : Fragment() {
     private fun showTvShowList(list: List<TvShowModel>?) {
         (activity as MainActivity).hideLoading()
         loadingRecyclerView = false
-        listAdapter.submitList(list)
+
+        list?.let {
+            empty_state_label.visibility = GONE
+            val newList = listAdapter.currentList.toMutableList()
+            newList.addAll(it.asIterable())
+            listAdapter.submitList(newList)
+        }
     }
 
-    private fun onScrollListener(): RecyclerView.OnScrollListener {
+    private fun searchByText(textSearch: String) {
+        homeViewModel.dispatchViewAction(HomeViewAction.TextSearchClick(textSearch))
+    }
+
+    private fun onScrollListener(callback: (Int) -> Unit): RecyclerView.OnScrollListener {
         return object : RecyclerView.OnScrollListener() {
             var pastVisibleItems = 0
             var visibleItemCount = 0
             var totalItemCount = 0
-            var page: Int = 1
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 visibleItemCount = tv_show_list.layoutManager?.childCount ?: 0
                 totalItemCount = tv_show_list.layoutManager?.itemCount ?: 0
                 pastVisibleItems =
-                        (tv_show_list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    (tv_show_list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
 
-                if (!loadingRecyclerView) {
+                if (!loadingRecyclerView && shouldPaginate) {
                     if ((visibleItemCount + pastVisibleItems) >= totalItemCount / 2) {
                         loadingRecyclerView = true
-                        homeViewModel.dispatchViewAction(HomeViewAction.Paginate(page++))
+                        callback(page++)
                     }
                 }
             }

@@ -23,13 +23,29 @@ class TvShowRepositoryTest {
         prepareScenario()
         val page = Random(currentTime).nextInt()
 
-        tvShowRepository.getShowsByPage(page)
+        tvShowRepository.getTvShowsByPage(page)
 
         coVerify(exactly = 1) { tvShowRemoteDataSource.getShowsByPage(page) }
     }
 
+    @Test
+    fun callGetShowByText_shouldReturnListTvShowModel() = runBlockingTest {
+        prepareScenario()
+        val searchText = "Text"
+
+        tvShowRepository.getTvShowsByText(searchText)
+
+        coVerify(exactly = 1) { tvShowRemoteDataSource.getTvShowsByText(searchText) }
+    }
+
     private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
         coEvery { tvShowRemoteDataSource.getShowsByPage(any()) } returns Resource(
+            status = Status.SUCCESS,
+            data = list,
+            message = null
+        )
+
+        coEvery { tvShowRemoteDataSource.getTvShowsByText(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,
             message = null
