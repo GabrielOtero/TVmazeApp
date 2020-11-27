@@ -6,14 +6,14 @@ import com.otero.tvmazeapp.data.ResponseHandler
 import com.otero.tvmazeapp.data.TvMazeApi
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSourceImpl
+import com.otero.tvmazeapp.data.mapper.TvShowDetailDtoToTvShowDetailModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.repository.TvShowRepository
 import com.otero.tvmazeapp.data.repository.TvShowRepositoryImpl
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByPage
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByText
+import com.otero.tvmazeapp.domain.usecase.*
+import com.otero.tvmazeapp.ui.detail.TvShowDetailViewModel
+import com.otero.tvmazeapp.ui.detail.TvShowDetailViewState
 import com.otero.tvmazeapp.ui.home.HomeViewModel
 import com.otero.tvmazeapp.ui.home.HomeViewState
 import okhttp3.OkHttpClient
@@ -30,10 +30,21 @@ const val KOIN_RETROFIT = "KOIN_RETROFIT"
 val tvMazeModule = module {
     viewModel {
         HomeViewModel(
-            get<GetTvShowByPageUseCase>(),
-            get<GetTvShowByTextUseCase>(),
-            get<HomeViewState>()
+                get<GetTvShowByPageUseCase>(),
+                get<GetTvShowByTextUseCase>(),
+                get<HomeViewState>()
         )
+    }
+
+    viewModel {
+        TvShowDetailViewModel(
+                get<GetTvShowByIdUseCase>(),
+                get<TvShowDetailViewState>()
+        )
+    }
+
+    factory {
+        GetTvShowById(get<TvShowRepository>()) as GetTvShowByIdUseCase
     }
 
     factory {
@@ -50,10 +61,11 @@ val tvMazeModule = module {
 
     factory {
         TvShowRemoteDataSourceImpl(
-            get<TvMazeApi>(),
-            get<ResponseHandler>(),
-            get<TvShowDtoToTvShowModelMapper>(),
-            get<TvShowSearchDtoToTvShowModelMapper>()
+                get<TvMazeApi>(),
+                get<ResponseHandler>(),
+                get<TvShowDtoToTvShowModelMapper>(),
+                get<TvShowSearchDtoToTvShowModelMapper>(),
+                get<TvShowDetailDtoToTvShowDetailModelMapper>()
         ) as TvShowRemoteDataSource
     }
 
@@ -70,7 +82,15 @@ val tvMazeModule = module {
     }
 
     factory {
+        TvShowDetailDtoToTvShowDetailModelMapper()
+    }
+
+    factory {
         HomeViewState()
+    }
+
+    factory {
+        TvShowDetailViewState()
     }
 
     factory {
@@ -79,15 +99,15 @@ val tvMazeModule = module {
 
     single(named(KOIN_RETROFIT)) {
         Retrofit.Builder()
-            .baseUrl(API_END_POINT)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        if (BuildConfig.DEBUG) level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
-            )
+                .baseUrl(API_END_POINT)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(
+                        OkHttpClient.Builder()
+                                .addInterceptor(HttpLoggingInterceptor().apply {
+                                    if (BuildConfig.DEBUG) level = HttpLoggingInterceptor.Level.BODY
+                                })
+                                .build()
+                )
             .build()
     }
 }

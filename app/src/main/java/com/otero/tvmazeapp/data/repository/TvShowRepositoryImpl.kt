@@ -8,4 +8,6 @@ class TvShowRepositoryImpl(
     override suspend fun getTvShowsByPage(page: Int) = tvShowRemoteDataSource.getShowsByPage(page)
     override suspend fun getTvShowsByText(searchText: String) =
         tvShowRemoteDataSource.getTvShowsByText(searchText)
+
+    override suspend fun getTvShowById(id: Int) = tvShowRemoteDataSource.getTvShowById(id)
 }

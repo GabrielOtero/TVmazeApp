@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.data.repository
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
+import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +39,18 @@ class TvShowRepositoryTest {
         coVerify(exactly = 1) { tvShowRemoteDataSource.getTvShowsByText(searchText) }
     }
 
-    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
+    @Test
+    fun callGetShowById_shouldReturnTvShowDetailModel() = runBlockingTest {
+        prepareScenario()
+        val id = kotlin.random.Random(currentTime).nextInt()
+
+        tvShowRepository.getTvShowById(id)
+
+        coVerify(exactly = 1) { tvShowRemoteDataSource.getTvShowById(id) }
+    }
+
+    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", "")),
+    detail : TvShowDetailModel = TvShowDetailModel(1, "", "")) {
         coEvery { tvShowRemoteDataSource.getShowsByPage(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,
@@ -49,6 +61,12 @@ class TvShowRepositoryTest {
             status = Status.SUCCESS,
             data = list,
             message = null
+        )
+
+        coEvery { tvShowRemoteDataSource.getTvShowById(any()) } returns Resource(
+                status = Status.SUCCESS,
+                data = detail,
+                message = null
         )
     }
 }
