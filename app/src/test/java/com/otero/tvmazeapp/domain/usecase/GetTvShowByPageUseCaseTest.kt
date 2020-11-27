@@ -28,7 +28,7 @@ class GetTvShowByPageUseCaseTest {
         coVerify(exactly = 1) { tvShowRepository.getTvShowsByPage(page) }
     }
 
-    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
+    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
         coEvery { tvShowRepository.getTvShowsByPage(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,

@@ -9,7 +9,7 @@ class TvShowSearchDtoToTvShowModelMapperTest {
 
     @Test
     fun mapFromDto_returnModel() {
-        val tvShowSearchDto = TvShowSearchDto(score = 1.2F, show = TvShowDto(1))
+        val tvShowSearchDto = TvShowSearchDto(score = 1.2F, show = TvShowDto(1, null, null))
 
         val mapper = TvShowSearchDtoToTvShowModelMapper()
 

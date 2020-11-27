@@ -40,7 +40,7 @@ class HomeViewModelTest {
 
     @Test
     fun dispatchAction_paginate_actionTvShowList() = runBlockingTest {
-        val list = listOf(TvShowModel(1), TvShowModel(2))
+        val list = listOf(TvShowModel(1, "", ""), TvShowModel(2, "", ""))
         prepareScenario(list)
 
         viewModel.dispatchViewAction(HomeViewAction.Paginate(0))
@@ -66,7 +66,7 @@ class HomeViewModelTest {
 
     @Test
     fun dispatchAction_textSearchClick_emptyString_actionPaginate() = runBlockingTest {
-        val list = listOf(TvShowModel(1), TvShowModel(2))
+        val list = listOf(TvShowModel(1, "", ""), TvShowModel(2, "", ""))
         prepareScenario(list)
 
         viewModel.dispatchViewAction(HomeViewAction.TextSearchClick(""))
@@ -83,12 +83,12 @@ class HomeViewModelTest {
 
         viewModel.dispatchViewAction(HomeViewAction.TextSearchClick("asdfg"))
 
-        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.EmptyState)
+        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.ShowEmptyState)
     }
 
     @Test
     fun dispatchAction_textSearchClick_actionTvShowList() = runBlockingTest {
-        val list = listOf(TvShowModel(1), TvShowModel(2))
+        val list = listOf(TvShowModel(1, "", ""), TvShowModel(2, "", ""))
         prepareScenario(list)
 
         viewModel.dispatchViewAction(HomeViewAction.TextSearchClick("asdfg"))
@@ -100,7 +100,7 @@ class HomeViewModelTest {
         )
     }
 
-    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
+    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
         coEvery { getShowByPageUseCase(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,

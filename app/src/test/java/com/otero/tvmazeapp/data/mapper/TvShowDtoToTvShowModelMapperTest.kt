@@ -8,7 +8,7 @@ class TvShowDtoToTvShowModelMapperTest {
 
     @Test
     fun mapFromDto_returnModel() {
-        val tvShowDto = TvShowDto(1)
+        val tvShowDto = TvShowDto(1, null, null)
 
         val mapper = TvShowDtoToTvShowModelMapper()
 

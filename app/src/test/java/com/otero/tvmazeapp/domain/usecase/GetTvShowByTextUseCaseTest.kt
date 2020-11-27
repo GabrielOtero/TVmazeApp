@@ -28,7 +28,7 @@ class GetTvShowByTextUseCaseTest  {
         coVerify(exactly = 1) { tvShowRepository.getTvShowsByText(searchText) }
     }
 
-    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
+    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
         coEvery { tvShowRepository.getTvShowsByText(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,

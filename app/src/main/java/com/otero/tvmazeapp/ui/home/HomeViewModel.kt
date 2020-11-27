@@ -37,7 +37,7 @@ class HomeViewModel(
             viewModelScope.launch {
                 val result = getTvShowByTextUseCase(textSearch)
                 if (result.data.isNullOrEmpty()) {
-                    viewState.action.postValue(HomeViewState.Action.EmptyState)
+                    viewState.action.postValue(HomeViewState.Action.ShowEmptyState)
                 } else {
                     viewState.action.postValue(HomeViewState.Action.ShowTvShowListByText(result.data))
                 }

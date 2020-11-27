@@ -6,7 +6,9 @@ import com.otero.tvmazeapp.domain.model.TvShowModel
 class TvShowDtoToTvShowModelMapper : BaseMapper<TvShowDto, TvShowModel>() {
     override fun mapFrom(from: TvShowDto) =
         TvShowModel(
-            from.id
+            id = from.id,
+            name = from.name ?: "",
+            image = from.image?.medium ?: ""
         )
 
 }

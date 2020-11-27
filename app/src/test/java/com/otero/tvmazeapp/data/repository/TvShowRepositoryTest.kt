@@ -38,7 +38,7 @@ class TvShowRepositoryTest {
         coVerify(exactly = 1) { tvShowRemoteDataSource.getTvShowsByText(searchText) }
     }
 
-    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1))) {
+    private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
         coEvery { tvShowRemoteDataSource.getShowsByPage(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,

@@ -6,12 +6,14 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import com.otero.tvmazeapp.ui.MainActivity
@@ -27,9 +29,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
     var page: Int = 1
 
     private val listAdapter by lazy {
-        TvShowAdapter {
-            homeViewModel.dispatchViewAction(HomeViewAction.CardClick(it))
-        }
+        TvShowAdapter(
+            cardClickListener = { homeViewModel.dispatchViewAction(HomeViewAction.CardClick(it)) },
+            loadImageCallback = { image, imageView -> loadCardImage(image, imageView) }
+        )
     }
 
     override fun onCreateView(
@@ -65,7 +68,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     is HomeViewState.Action.ShowLoading -> (activity as MainActivity).showLoading()
                     is HomeViewState.Action.ShowTvShowList -> showTvShowList(it.list)
                     is HomeViewState.Action.GoToTvShowDetail -> goToTvShowDetail(it.id)
-                    is HomeViewState.Action.EmptyState -> showEmptyState()
+                    is HomeViewState.Action.ShowEmptyState -> showEmptyState()
                     is HomeViewState.Action.ClearList -> clearList()
                     is HomeViewState.Action.ShowTvShowListByText -> showTvShowListByText(it.list)
                 }
@@ -108,6 +111,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private fun searchByText(textSearch: String) {
         homeViewModel.dispatchViewAction(HomeViewAction.TextSearchClick(textSearch))
+    }
+
+    private fun loadCardImage(image: String, imageView: ImageView) {
+        Glide
+            .with(this)
+            .load(image.replace("http", "https"))
+            .into(imageView);
     }
 
     private fun onScrollListener(callback: (Int) -> Unit): RecyclerView.OnScrollListener {

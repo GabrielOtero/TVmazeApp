@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
@@ -11,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.TvShowModel
 
-class TvShowAdapter(private val cardClickListener: (Int) -> Unit) :
+class TvShowAdapter(
+    private val cardClickListener: (Int) -> Unit,
+    private val loadImageCallback: (String, ImageView) -> Unit
+) :
     ListAdapter<TvShowModel, ViewHolder>(ParticipantRulesDiffcalback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,7 +25,7 @@ class TvShowAdapter(private val cardClickListener: (Int) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), cardClickListener)
+        holder.bind(getItem(position), cardClickListener, loadImageCallback)
     }
 
     class ParticipantRulesDiffcalback : DiffUtil.ItemCallback<TvShowModel>() {
@@ -40,15 +44,17 @@ class TvShowAdapter(private val cardClickListener: (Int) -> Unit) :
 }
 
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private var tvShowId: TextView = itemView.findViewById(R.id.tv_show_id)
+    private var tvShowName: TextView = itemView.findViewById(R.id.tv_show_name)
     private var tvShowCard: ConstraintLayout = itemView.findViewById(R.id.tv_show_card)
+    private var tvShowPoster: ImageView = itemView.findViewById(R.id.tv_show_poster)
 
     fun bind(
         item: TvShowModel,
-        cardClickListener: (Int) -> Unit
+        cardClickListener: (Int) -> Unit,
+        loadImageCallback: (String, ImageView) -> Unit
     ) {
-        tvShowId.text = item.id.toString()
+        tvShowName.text = item.name
+        loadImageCallback(item.image, tvShowPoster)
         tvShowCard.setOnClickListener { cardClickListener(item.id) }
     }
-
 }

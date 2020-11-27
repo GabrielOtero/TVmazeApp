@@ -8,7 +8,7 @@ class HomeViewState {
 
     sealed class Action {
         object ShowLoading : Action()
-        object EmptyState : Action()
+        object ShowEmptyState : Action()
         object ClearList : Action()
 
         data class ShowTvShowList(val list: List<TvShowModel>?) : Action()

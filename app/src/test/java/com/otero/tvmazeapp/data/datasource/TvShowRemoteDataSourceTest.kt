@@ -25,7 +25,7 @@ class TvShowRemoteDataSourceTest {
 
     @Test
     fun getShowsByPage_returnSucessResult() = runBlocking {
-        prepareScenario(listOf(TvShowDto(1)))
+        prepareScenario(listOf(TvShowDto(1, null, null)))
 
         tvShowRemoteDataSource.getShowsByPage(1)
 
@@ -34,7 +34,7 @@ class TvShowRemoteDataSourceTest {
 
     @Test
     fun getShowsByText_returnSucessResult() = runBlocking {
-        prepareScenario(listOf(TvShowDto(1)))
+        prepareScenario(listOf(TvShowDto(1, null, null)))
         val searchText = "text"
 
         tvShowRemoteDataSource.getTvShowsByText(searchText)
