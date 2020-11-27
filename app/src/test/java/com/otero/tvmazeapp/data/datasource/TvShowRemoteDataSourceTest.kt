@@ -57,7 +57,9 @@ class TvShowRemoteDataSourceTest {
 
     private fun prepareScenario(list: List<TvShowDto> = emptyList(),
                                 listSearch: List<TvShowSearchDto> = emptyList(),
-                                tvShowDetailDto: TvShowDetailDto = TvShowDetailDto(1, "", ImageDto(""))
+                                tvShowDetailDto: TvShowDetailDto = TvShowDetailDto(1, "",
+                                        ImageDto(""), null, null,
+                                        null)
     ) {
         coEvery { api.getShowsByPage(any()) } returns list
         coEvery { api.getTvShowsByText(any()) } returns listSearch

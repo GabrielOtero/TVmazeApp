@@ -117,7 +117,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         Glide
             .with(this)
             .load(image.replace("http", "https"))
-            .into(imageView);
+            .into(imageView)
     }
 
     private fun onScrollListener(callback: (Int) -> Unit): RecyclerView.OnScrollListener {

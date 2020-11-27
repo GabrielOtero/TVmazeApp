@@ -5,6 +5,7 @@
     <dimen name="tv_show_list_item_padding">16dp</dimen>
     <dimen name="progress_bar_padding">180dp</dimen>
     <dimen name="tv_show_list_item_margin">16dp</dimen>
-    <dimen name="tv_show_list_item_title_margin_left">16dp</dimen>
+    <dimen name="tv_show_list_item_title_margin_start">16dp</dimen>
+    <dimen name="tv_show_list_item_title_margin_top">16dp</dimen>
     <dimen name="card_corner_radius">8dp</dimen>
 </resources>

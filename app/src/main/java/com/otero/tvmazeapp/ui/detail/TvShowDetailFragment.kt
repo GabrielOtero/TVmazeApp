@@ -5,11 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.ui.MainActivity
+import kotlinx.android.synthetic.main.tv_show_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val ID_KEY = "tvShowId"
@@ -56,6 +59,23 @@ class TvShowDetailFragment : Fragment() {
 
     private fun loadInfo(tvShowModel: TvShowDetailModel?) {
         showLoading(false)
+        tvShowModel?.let {
+            Glide.with(this)
+                    .load(tvShowModel.image.replace("http", "https"))
+                    .into(tv_show_poster)
+            tv_show_name.text = tvShowModel.name
+
+            tv_show_genres.text = getString(R.string.tv_show_detail_genres_string,
+                    tvShowModel.genres.joinToString(", "))
+            tv_show_schedule.text =
+                    getString(R.string.tv_show_detail_schedule_string,
+                            tvShowModel.schedule.time, tvShowModel.schedule.days
+                            .joinToString(", "))
+            tv_show_summary.text = HtmlCompat.fromHtml(tvShowModel.summary,
+                    HtmlCompat.FROM_HTML_MODE_COMPACT)
+        }
+
         Log.d("TvShowDetailFragment", tvShowModel.toString())
+
     }
 }

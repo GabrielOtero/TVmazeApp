@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.data.repository
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
+import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.coEvery
@@ -50,7 +51,7 @@ class TvShowRepositoryTest {
     }
 
     private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", "")),
-    detail : TvShowDetailModel = TvShowDetailModel(1, "", "")) {
+    detail : TvShowDetailModel = TvShowDetailModel(1, "", "", emptyList(), ScheduleModel("", emptyList()), "")) {
         coEvery { tvShowRemoteDataSource.getShowsByPage(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,

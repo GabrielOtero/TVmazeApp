@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.ui.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
+import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.usecase.GetTvShowByIdUseCase
 import io.mockk.coEvery
@@ -39,7 +40,7 @@ class TvShowDetailViewModelTest {
     @Test
     fun dispatchAction_init_actionTvShowDetail() = runBlockingTest {
         val id = Random(currentTime).nextInt()
-        val detail = TvShowDetailModel(id, "", "")
+        val detail = TvShowDetailModel(id, "", "", emptyList(), ScheduleModel("", emptyList()), "")
         prepareScenario(detail)
 
         viewModel.dispatchViewAction(TvShowDetailViewAction.Init(id))
@@ -50,7 +51,8 @@ class TvShowDetailViewModelTest {
                 (viewModel.viewState.action.value as TvShowDetailViewState.Action.LoadInfo).tvShowDetailModel)
     }
 
-    private fun prepareScenario(detail: TvShowDetailModel = TvShowDetailModel(1, "", "")) {
+    private fun prepareScenario(detail: TvShowDetailModel = TvShowDetailModel(1, "", "",
+            emptyList(), ScheduleModel("", emptyList()), "")) {
         coEvery { getShowByIdUseCase(any()) } returns Resource(
                 status = Status.SUCCESS,
                 data = detail,
