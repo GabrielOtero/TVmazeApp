@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.domain.model.TvShowModel
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
+import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByTextUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.spyk

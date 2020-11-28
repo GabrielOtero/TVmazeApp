@@ -26,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="160dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/girls"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,9 +35,26 @@
             android:textSize="@dimen/title_text_size"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/tv_show_list_item_title_margin_start"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/favorite_icon"
             app:layout_constraintStart_toEndOf="@id/episode_poster"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/favorite_icon"
+            android:layout_width="@dimen/favorite_icon_size"
+            android:layout_height="@dimen/favorite_icon_size"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ic_baseline_favorite_border_24"/>
+
+        <ImageView
+            android:id="@+id/unfavorite_icon"
+            android:layout_width="@dimen/favorite_icon_size"
+            android:layout_height="@dimen/favorite_icon_size"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            android:src="@drawable/ic_baseline_favorite_24"/>
 
         <TextView
             android:id="@+id/episode_number"

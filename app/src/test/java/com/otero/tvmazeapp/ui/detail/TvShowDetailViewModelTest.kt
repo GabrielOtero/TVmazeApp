@@ -1,14 +1,14 @@
 package com.otero.tvmazeapp.ui.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.otero.tvmazeapp.CoroutinesTestRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.domain.model.EpisodeBySeasonModel
 import com.otero.tvmazeapp.domain.model.EpisodeItemResult
 import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
-import com.otero.tvmazeapp.domain.usecase.GetEpisodeByShowUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByIdUseCase
+import com.otero.tvmazeapp.domain.usecase.interfaces.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.spyk
@@ -28,12 +28,25 @@ class TvShowDetailViewModelTest {
     @get:Rule
     val instantTask = InstantTaskExecutorRule()
 
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
+
     private val getShowByIdUseCase = mockk<GetTvShowByIdUseCase>()
     private val getEpisodeByShow = mockk<GetEpisodeByShowUseCase>()
+    private val saveFavoriteTvShow = mockk<SaveFavoriteTvShowUseCase>()
+    private val getFavoriteTvShowById = mockk<GetFavoriteTvShowByIdUseCase>()
+    private val removeFavoriteTvShowById = mockk<RemoveFavoriteTvShowByIdUseCase>()
     private val viewState = spyk(TvShowDetailViewState())
 
     private val viewModel by lazy {
-        TvShowDetailViewModel(getShowByIdUseCase, getEpisodeByShow, viewState)
+        TvShowDetailViewModel(
+            getShowByIdUseCase,
+            getEpisodeByShow,
+            saveFavoriteTvShow,
+            getFavoriteTvShowById,
+            removeFavoriteTvShowById,
+            viewState
+        )
     }
 
     @Before

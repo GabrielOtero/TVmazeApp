@@ -9,6 +9,7 @@ class TvShowDetailViewState {
 
     sealed class Action {
         object ShowLoading : Action()
+        object LoadAsFavorite : Action()
         data class LoadInfo(val tvShowDetailModel: TvShowDetailModel?) : Action()
         class LoadEpisodes(val episodes: EpisodeBySeasonModel?) : Action()
     }

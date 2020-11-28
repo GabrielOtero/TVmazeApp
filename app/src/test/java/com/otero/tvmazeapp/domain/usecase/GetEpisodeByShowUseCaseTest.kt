@@ -1,5 +1,6 @@
 package com.otero.tvmazeapp.domain.usecase
 
+import com.otero.tvmazeapp.CoroutinesTestRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.repository.EpisodeRepository
@@ -13,14 +14,18 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Rule
 import org.junit.Test
 import java.util.*
 
 @ExperimentalCoroutinesApi
 class GetEpisodeByShowUseCaseTest {
 
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
+
     private val episodeRepository = mockk<EpisodeRepository>()
-    private val getEpisodeByShow = GetEpisodeByShow(episodeRepository)
+    private val getEpisodeByShow = GetEpisodeByShow(episodeRepository, coroutinesTestRule.testDispatcherProvider)
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {

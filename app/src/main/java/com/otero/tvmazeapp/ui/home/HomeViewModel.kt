@@ -1,8 +1,8 @@
 package com.otero.tvmazeapp.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByPageUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByTextUseCase
+import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByTextUseCase
 import com.otero.tvmazeapp.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 

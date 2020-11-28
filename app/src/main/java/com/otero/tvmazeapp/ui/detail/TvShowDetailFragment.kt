@@ -3,8 +3,9 @@ package com.otero.tvmazeapp.ui.detail
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
+import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -12,22 +13,23 @@ import com.bumptech.glide.Glide
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.EpisodeBySeasonModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
+import com.otero.tvmazeapp.domain.model.TvShowModel
 import com.otero.tvmazeapp.ui.MainActivity
 import kotlinx.android.synthetic.main.tv_show_detail_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val ID_KEY = "tvShowId"
 
-class TvShowDetailFragment : Fragment() {
+class TvShowDetailFragment : Fragment(), View.OnClickListener {
 
     private val viewModel by viewModel<TvShowDetailViewModel>()
 
     private val listAdapter by lazy {
         EpisodeListAdapter(
-                cardClickListener = {
-                    val ft = childFragmentManager.beginTransaction()
-                    EpisodeDetailFragment.newInstance(it).show(ft, "Dialog")
-                }
+            cardClickListener = {
+                val ft = childFragmentManager.beginTransaction()
+                EpisodeDetailFragment.newInstance(it).show(ft, "Dialog")
+            }
         )
     }
 
@@ -47,6 +49,9 @@ class TvShowDetailFragment : Fragment() {
         }
 
         tv_show_list.adapter = listAdapter
+
+        favorite_icon.setOnClickListener(this)
+        unfavorite_icon.setOnClickListener(this)
     }
 
     private fun observeViewState() {
@@ -57,9 +62,15 @@ class TvShowDetailFragment : Fragment() {
                         is TvShowDetailViewState.Action.LoadInfo -> loadInfo(it.tvShowDetailModel)
                         is TvShowDetailViewState.Action.ShowLoading -> showLoading()
                         is TvShowDetailViewState.Action.LoadEpisodes -> showEpisodes(it.episodes)
+                        TvShowDetailViewState.Action.LoadAsFavorite -> loadAsFavorite()
                     }
                 }
         )
+    }
+
+    private fun loadAsFavorite() {
+        favorite_icon.visibility = GONE
+        unfavorite_icon.visibility = VISIBLE
     }
 
     private fun showEpisodes(episodes: EpisodeBySeasonModel?) {
@@ -79,22 +90,47 @@ class TvShowDetailFragment : Fragment() {
         showLoading(false)
         tvShowModel?.let {
             Glide.with(this)
-                    .load(tvShowModel.image.replace("http", "https"))
-                    .into(episode_poster)
+                .load(tvShowModel.image.replace("http", "https"))
+                .into(episode_poster)
             tv_show_name.text = tvShowModel.name
 
-            episode_number.text = getString(R.string.tv_show_detail_genres_string,
-                    tvShowModel.genres.joinToString(", "))
+            episode_number.text = getString(
+                R.string.tv_show_detail_genres_string,
+                tvShowModel.genres.joinToString(", ")
+            )
             episode_season.text =
-                    getString(R.string.tv_show_detail_schedule_string,
-                            tvShowModel.schedule.time, tvShowModel.schedule.days
-                            .joinToString(", "))
-            episode_summary.text = HtmlCompat.fromHtml(tvShowModel.summary,
-                    HtmlCompat.FROM_HTML_MODE_COMPACT)
+                getString(
+                    R.string.tv_show_detail_schedule_string,
+                    tvShowModel.schedule.time, tvShowModel.schedule.days
+                        .joinToString(", ")
+                )
+            episode_summary.text = HtmlCompat.fromHtml(
+                tvShowModel.summary,
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+            )
 
             val id = arguments?.getInt(ID_KEY)
             id?.let {
                 viewModel.dispatchViewAction(TvShowDetailViewAction.LoadEpisodes(it))
+            }
+        }
+    }
+
+    override fun onClick(view: View?) {
+        when (view) {
+            favorite_icon -> {
+                viewModel.dispatchViewAction(TvShowDetailViewAction.AddToFavoritesClick)
+                Toast.makeText(context, getString(R.string.favorite_message), Toast.LENGTH_SHORT)
+                    .show()
+                favorite_icon.visibility = GONE
+                unfavorite_icon.visibility = VISIBLE
+            }
+            unfavorite_icon -> {
+                viewModel.dispatchViewAction(TvShowDetailViewAction.RemoveFromFavoritesClick)
+                Toast.makeText(context, getString(R.string.unfavorite_message), Toast.LENGTH_SHORT)
+                    .show()
+                favorite_icon.visibility = VISIBLE
+                unfavorite_icon.visibility = GONE
             }
         }
     }

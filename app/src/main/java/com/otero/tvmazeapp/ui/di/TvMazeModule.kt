@@ -1,24 +1,25 @@
 package com.otero.tvmazeapp.ui.di
 
+import androidx.room.Room
 import com.otero.tvmazeapp.BuildConfig
 import com.otero.tvmazeapp.BuildConfig.API_END_POINT
 import com.otero.tvmazeapp.data.ResponseHandler
 import com.otero.tvmazeapp.data.TvMazeApi
-import com.otero.tvmazeapp.data.datasource.EpisodeRemoteDataSource
-import com.otero.tvmazeapp.data.datasource.EpisodeRemoteDataSourceImpl
-import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
-import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSourceImpl
-import com.otero.tvmazeapp.data.mapper.EpisodeDtoToEpisodeModelMapper
-import com.otero.tvmazeapp.data.mapper.TvShowDetailDtoToTvShowDetailModelMapper
-import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
-import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
+import com.otero.tvmazeapp.data.database.AppDatabase
+import com.otero.tvmazeapp.data.datasource.*
+import com.otero.tvmazeapp.data.mapper.*
 import com.otero.tvmazeapp.data.repository.EpisodeRepository
 import com.otero.tvmazeapp.data.repository.EpisodeRepositoryImpl
 import com.otero.tvmazeapp.data.repository.TvShowRepository
 import com.otero.tvmazeapp.data.repository.TvShowRepositoryImpl
+import com.otero.tvmazeapp.data.utils.DefaultDispatcherProvider
+import com.otero.tvmazeapp.data.utils.DispatcherProvider
 import com.otero.tvmazeapp.domain.usecase.*
+import com.otero.tvmazeapp.domain.usecase.interfaces.*
 import com.otero.tvmazeapp.ui.detail.TvShowDetailViewModel
 import com.otero.tvmazeapp.ui.detail.TvShowDetailViewState
+import com.otero.tvmazeapp.ui.favorite.FavoriteViewModel
+import com.otero.tvmazeapp.ui.favorite.FavoriteViewState
 import com.otero.tvmazeapp.ui.home.HomeViewModel
 import com.otero.tvmazeapp.ui.home.HomeViewState
 import okhttp3.OkHttpClient
@@ -30,6 +31,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 const val KOIN_RETROFIT = "KOIN_RETROFIT"
+const val KOIN_ROOM = "KOIN_ROOM"
 
 @Suppress("RemoveExplicitTypeArguments", "USELESS_CAST")
 val tvMazeModule = module {
@@ -43,14 +45,55 @@ val tvMazeModule = module {
 
     viewModel {
         TvShowDetailViewModel(
-                get<GetTvShowByIdUseCase>(),
-                get<GetEpisodeByShowUseCase>(),
-                get<TvShowDetailViewState>()
+            get<GetTvShowByIdUseCase>(),
+            get<GetEpisodeByShowUseCase>(),
+            get<SaveFavoriteTvShowUseCase>(),
+            get<GetFavoriteTvShowByIdUseCase>(),
+            get<RemoveFavoriteTvShowByIdUseCase>(),
+            get<TvShowDetailViewState>()
+        )
+    }
+
+    viewModel {
+        FavoriteViewModel(
+            get<GetFavoriteListUseCase>(),
+            get<FavoriteViewState>()
         )
     }
 
     factory {
-        GetEpisodeByShow(get<EpisodeRepository>()) as GetEpisodeByShowUseCase
+        GetEpisodeByShow(
+            get<EpisodeRepository>(),
+            get<DispatcherProvider>()
+        ) as GetEpisodeByShowUseCase
+    }
+
+    factory {
+        RemoveFavoriteTvShowById(
+            get<TvShowRepository>(),
+            get<DispatcherProvider>()
+        ) as RemoveFavoriteTvShowByIdUseCase
+    }
+
+    factory {
+        GetFavoriteTvShowById(
+            get<TvShowRepository>(),
+            get<DispatcherProvider>()
+        ) as GetFavoriteTvShowByIdUseCase
+    }
+
+    factory {
+        GetFavoriteList(
+            get<TvShowRepository>(),
+            get<DispatcherProvider>()
+        ) as GetFavoriteListUseCase
+    }
+
+    factory {
+        SaveFavoriteTvShow(
+            get<TvShowRepository>(),
+            get<DispatcherProvider>()
+        ) as SaveFavoriteTvShowUseCase
     }
 
     factory {
@@ -66,28 +109,42 @@ val tvMazeModule = module {
     }
 
     factory {
+        DefaultDispatcherProvider() as DispatcherProvider
+    }
+
+    factory {
         EpisodeRepositoryImpl(get<EpisodeRemoteDataSource>()) as EpisodeRepository
     }
 
     factory {
-        TvShowRepositoryImpl(get<TvShowRemoteDataSource>()) as TvShowRepository
+        TvShowRepositoryImpl(
+            get<TvShowRemoteDataSource>(),
+            get<TvShowLocalDataSource>()
+        ) as TvShowRepository
     }
 
     factory {
         TvShowRemoteDataSourceImpl(
-                get<TvMazeApi>(),
-                get<ResponseHandler>(),
-                get<TvShowDtoToTvShowModelMapper>(),
-                get<TvShowSearchDtoToTvShowModelMapper>(),
-                get<TvShowDetailDtoToTvShowDetailModelMapper>()
+            get<TvMazeApi>(),
+            get<ResponseHandler>(),
+            get<TvShowDtoToTvShowModelMapper>(),
+            get<TvShowSearchDtoToTvShowModelMapper>(),
+            get<TvShowDetailDtoToTvShowDetailModelMapper>()
         ) as TvShowRemoteDataSource
     }
 
     factory {
+        TvShowLocalDataSourceImpl(
+            get<AppDatabase>(),
+            get<TvShowDboToTvShowModelMapper>()
+        ) as TvShowLocalDataSource
+    }
+
+    factory {
         EpisodeRemoteDataSourceImpl(
-                get<TvMazeApi>(),
-                get<ResponseHandler>(),
-                get<EpisodeDtoToEpisodeModelMapper>()
+            get<TvMazeApi>(),
+            get<ResponseHandler>(),
+            get<EpisodeDtoToEpisodeModelMapper>()
         ) as EpisodeRemoteDataSource
     }
 
@@ -112,6 +169,10 @@ val tvMazeModule = module {
     }
 
     factory {
+        TvShowDboToTvShowModelMapper()
+    }
+
+    factory {
         HomeViewState()
     }
 
@@ -120,20 +181,36 @@ val tvMazeModule = module {
     }
 
     factory {
+        FavoriteViewState()
+    }
+
+    factory {
         get<Retrofit>(named(KOIN_RETROFIT)).create(TvMazeApi::class.java)
+    }
+
+    factory {
+        get<AppDatabase>(named(KOIN_ROOM))
     }
 
     single(named(KOIN_RETROFIT)) {
         Retrofit.Builder()
-                .baseUrl(API_END_POINT)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(
-                        OkHttpClient.Builder()
-                                .addInterceptor(HttpLoggingInterceptor().apply {
-                                    if (BuildConfig.DEBUG) level = HttpLoggingInterceptor.Level.BODY
-                                })
-                                .build()
-                )
+            .baseUrl(API_END_POINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        if (BuildConfig.DEBUG) level = HttpLoggingInterceptor.Level.BODY
+                    })
+                    .build()
+            )
             .build()
+    }
+
+    single(named(KOIN_ROOM)) {
+        Room.databaseBuilder(
+            get(),
+            AppDatabase::class.java,
+            "database"
+        ).build()
     }
 }

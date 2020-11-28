@@ -2,26 +2,56 @@ package com.otero.tvmazeapp.ui.detail
 
 import androidx.lifecycle.viewModelScope
 import com.otero.tvmazeapp.data.Status
-import com.otero.tvmazeapp.domain.usecase.GetEpisodeByShowUseCase
-import com.otero.tvmazeapp.domain.usecase.GetTvShowByIdUseCase
+import com.otero.tvmazeapp.domain.model.TvShowDetailModel
+import com.otero.tvmazeapp.domain.model.TvShowModel
+import com.otero.tvmazeapp.domain.usecase.interfaces.*
 import com.otero.tvmazeapp.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class TvShowDetailViewModel(
-        private val getTvShowById: GetTvShowByIdUseCase,
-        private val getEpisodeByShow: GetEpisodeByShowUseCase,
-        override val viewState: TvShowDetailViewState
+    private val getTvShowById: GetTvShowByIdUseCase,
+    private val getEpisodeByShow: GetEpisodeByShowUseCase,
+    private val saveFavoriteTvShow: SaveFavoriteTvShowUseCase,
+    private val getFavoriteTvShowById: GetFavoriteTvShowByIdUseCase,
+    private val removeFavoriteTvShowById: RemoveFavoriteTvShowByIdUseCase,
+    override val viewState: TvShowDetailViewState
 ) : BaseViewModel<TvShowDetailViewState, TvShowDetailViewAction>() {
+
+    private var tvShowDetailModel: TvShowDetailModel? = null
 
     override fun dispatchViewAction(viewAction: TvShowDetailViewAction) {
         when (viewAction) {
             is TvShowDetailViewAction.Init -> loadScreen(viewAction.id)
             is TvShowDetailViewAction.LoadEpisodes -> loadEpisodes(viewAction.id)
+            is TvShowDetailViewAction.AddToFavoritesClick -> addToFavorites()
+            TvShowDetailViewAction.RemoveFromFavoritesClick -> removeFromFavorites()
+        }
+    }
+
+    private fun removeFromFavorites() {
+        tvShowDetailModel?.let { detailt ->
+            viewModelScope.launch {
+                removeFavoriteTvShowById(detailt.id)
+            }
+        }
+    }
+
+    private fun addToFavorites() {
+        tvShowDetailModel?.let { detailt ->
+            viewModelScope.launch {
+                saveFavoriteTvShow(
+                    TvShowModel(
+                        id = detailt.id,
+                        name = detailt.name,
+                        image = detailt.image
+                    )
+                )
+            }
         }
     }
 
     private fun loadEpisodes(id: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch() {
             val result = getEpisodeByShow(id)
             if (result.status == Status.SUCCESS) {
                 viewState.action.postValue(TvShowDetailViewState.Action.LoadEpisodes(result.data))
@@ -34,7 +64,15 @@ class TvShowDetailViewModel(
         viewModelScope.launch {
             val result = getTvShowById(id)
             if (result.status == Status.SUCCESS) {
+                tvShowDetailModel = result.data
                 viewState.action.postValue(TvShowDetailViewState.Action.LoadInfo(result.data))
+            }
+        }
+
+        viewModelScope.launch {
+            val result = getFavoriteTvShowById(id)
+            result?.let {
+                viewState.action.postValue(TvShowDetailViewState.Action.LoadAsFavorite)
             }
         }
     }

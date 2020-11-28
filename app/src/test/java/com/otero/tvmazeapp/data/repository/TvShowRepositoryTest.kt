@@ -2,6 +2,7 @@ package com.otero.tvmazeapp.data.repository
 
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
+import com.otero.tvmazeapp.data.datasource.TvShowLocalDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
@@ -18,7 +19,8 @@ import java.util.*
 class TvShowRepositoryTest {
 
     private val tvShowRemoteDataSource = mockk<TvShowRemoteDataSource>()
-    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource)
+    private val tvShowLocalDataSource = mockk<TvShowLocalDataSource>()
+    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource, tvShowLocalDataSource)
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {
