@@ -4,10 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.otero.tvmazeapp.CoroutinesTestRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
-import com.otero.tvmazeapp.domain.model.EpisodeBySeasonModel
-import com.otero.tvmazeapp.domain.model.EpisodeItemResult
-import com.otero.tvmazeapp.domain.model.ScheduleModel
-import com.otero.tvmazeapp.domain.model.TvShowDetailModel
+import com.otero.tvmazeapp.domain.model.*
 import com.otero.tvmazeapp.domain.usecase.interfaces.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -86,7 +83,8 @@ class TvShowDetailViewModelTest {
     private fun prepareScenario(
             detail: TvShowDetailModel = TvShowDetailModel(1, "", "",
                     emptyList(), ScheduleModel("", emptyList()), ""),
-            episodeBySeasonModel: EpisodeBySeasonModel = EpisodeBySeasonModel()
+            episodeBySeasonModel: EpisodeBySeasonModel = EpisodeBySeasonModel(),
+            favoriteShow: TvShowModel = TvShowModel(1, "", "")
 
     ) {
         coEvery { getShowByIdUseCase(any()) } returns Resource(
@@ -100,6 +98,8 @@ class TvShowDetailViewModelTest {
                 data = episodeBySeasonModel,
                 message = null
         )
+
+        coEvery { getFavoriteTvShowById(any()) } returns null
     }
 
 }

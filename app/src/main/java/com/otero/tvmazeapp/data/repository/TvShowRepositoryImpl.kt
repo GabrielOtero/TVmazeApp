@@ -11,13 +11,10 @@ class TvShowRepositoryImpl(
     override suspend fun getTvShowsByPage(page: Int) = tvShowRemote.getShowsByPage(page)
     override suspend fun getTvShowsByText(searchText: String) =
         tvShowRemote.getTvShowsByText(searchText)
-
     override suspend fun getTvShowById(id: Int) = tvShowRemote.getTvShowById(id)
     override suspend fun saveFavoriteTvShow(tvShowModel: TvShowModel) =
         tvShowLocal.insertTvShow(tvShowModel)
-
     override suspend fun getFavoriteTvShowById(id: Int) = tvShowLocal.getById(id)
     override suspend fun removeFavoriteTvShowById(id: Int) = tvShowLocal.removeTvShow(id)
-
     override suspend fun getAllFavoriteTvShow() = tvShowLocal.getAllTvShow()
 }
