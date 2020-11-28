@@ -6,7 +6,7 @@
     android:id="@+id/tv_show_card"
     android:layout_marginLeft="@dimen/tv_show_list_item_margin"
     android:layout_marginRight="@dimen/tv_show_list_item_margin"
-    android:layout_marginBottom="@dimen/tv_show_list_item_margin"
+    android:layout_marginTop="@dimen/tv_show_list_item_margin"
     android:background="@drawable/list_card_background"
     android:padding="@dimen/tv_show_list_item_padding">
 

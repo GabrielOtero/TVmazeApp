@@ -13,6 +13,8 @@
         android:hint="@string/home_search_series_by_name"
         app:layout_constraintEnd_toStartOf="@id/search_button"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="@dimen/home_margin"
+        android:drawableStart="@drawable/ic_baseline_search_24"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -20,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/home_search_button"
+        android:layout_margin="@dimen/home_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
