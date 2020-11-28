@@ -1,15 +1,16 @@
 package com.otero.tvmazeapp.ui.detail
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.otero.tvmazeapp.R
+import com.otero.tvmazeapp.domain.model.EpisodeBySeasonModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.ui.MainActivity
 import kotlinx.android.synthetic.main.tv_show_detail_fragment.*
@@ -20,6 +21,12 @@ const val ID_KEY = "tvShowId"
 class TvShowDetailFragment : Fragment() {
 
     private val viewModel by viewModel<TvShowDetailViewModel>()
+
+    private val listAdapter by lazy {
+        EpisodeListAdapter(
+                cardClickListener = { }
+        )
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +42,8 @@ class TvShowDetailFragment : Fragment() {
         id?.let {
             viewModel.dispatchViewAction(TvShowDetailViewAction.Init(it))
         }
+
+        tv_show_list.adapter = listAdapter
     }
 
     private fun observeViewState() {
@@ -44,15 +53,21 @@ class TvShowDetailFragment : Fragment() {
                     when (it) {
                         is TvShowDetailViewState.Action.LoadInfo -> loadInfo(it.tvShowDetailModel)
                         is TvShowDetailViewState.Action.ShowLoading -> showLoading()
+                        is TvShowDetailViewState.Action.LoadEpisodes -> showEpisodes(it.episodes)
                     }
                 }
         )
     }
 
+    private fun showEpisodes(episodes: EpisodeBySeasonModel?) {
+        episode_progress.visibility = GONE
+        listAdapter.submitList(episodes?.list)
+    }
+
     private fun showLoading(show: Boolean = true) {
-        if(show) {
+        if (show) {
             (activity as MainActivity).showLoading()
-        }else {
+        } else {
             (activity as MainActivity).hideLoading()
         }
     }
@@ -73,9 +88,11 @@ class TvShowDetailFragment : Fragment() {
                             .joinToString(", "))
             tv_show_summary.text = HtmlCompat.fromHtml(tvShowModel.summary,
                     HtmlCompat.FROM_HTML_MODE_COMPACT)
+
+            val id = arguments?.getInt(ID_KEY)
+            id?.let {
+                viewModel.dispatchViewAction(TvShowDetailViewAction.LoadEpisodes(it))
+            }
         }
-
-        Log.d("TvShowDetailFragment", tvShowModel.toString())
-
     }
 }

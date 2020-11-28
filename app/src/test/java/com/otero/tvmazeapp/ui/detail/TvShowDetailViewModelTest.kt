@@ -3,8 +3,11 @@ package com.otero.tvmazeapp.ui.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
+import com.otero.tvmazeapp.domain.model.EpisodeBySeasonModel
+import com.otero.tvmazeapp.domain.model.EpisodeItemResult
 import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
+import com.otero.tvmazeapp.domain.usecase.GetEpisodeByShowUseCase
 import com.otero.tvmazeapp.domain.usecase.GetTvShowByIdUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -26,10 +29,11 @@ class TvShowDetailViewModelTest {
     val instantTask = InstantTaskExecutorRule()
 
     private val getShowByIdUseCase = mockk<GetTvShowByIdUseCase>()
+    private val getEpisodeByShow = mockk<GetEpisodeByShowUseCase>()
     private val viewState = spyk(TvShowDetailViewState())
 
     private val viewModel by lazy {
-        TvShowDetailViewModel(getShowByIdUseCase, viewState)
+        TvShowDetailViewModel(getShowByIdUseCase, getEpisodeByShow, viewState)
     }
 
     @Before
@@ -51,11 +55,36 @@ class TvShowDetailViewModelTest {
                 (viewModel.viewState.action.value as TvShowDetailViewState.Action.LoadInfo).tvShowDetailModel)
     }
 
-    private fun prepareScenario(detail: TvShowDetailModel = TvShowDetailModel(1, "", "",
-            emptyList(), ScheduleModel("", emptyList()), "")) {
+    @Test
+    fun dispatchAction_loadEpisodes_actionTvShowEpisodes() = runBlockingTest {
+        val id = Random(currentTime).nextInt()
+        val detail = TvShowDetailModel(id, "", "", emptyList(), ScheduleModel("", emptyList()), "")
+        val episodeBySeasonModel = EpisodeBySeasonModel(mutableListOf(EpisodeItemResult(1,"")))
+        prepareScenario(detail, episodeBySeasonModel)
+
+        viewModel.dispatchViewAction(TvShowDetailViewAction.LoadEpisodes(id))
+
+        Assert.assertTrue(viewModel.viewState.action.value is TvShowDetailViewState.Action.LoadEpisodes)
+        Assert.assertEquals(
+                episodeBySeasonModel,
+                (viewModel.viewState.action.value as TvShowDetailViewState.Action.LoadEpisodes).episodes)
+    }
+
+    private fun prepareScenario(
+            detail: TvShowDetailModel = TvShowDetailModel(1, "", "",
+                    emptyList(), ScheduleModel("", emptyList()), ""),
+            episodeBySeasonModel: EpisodeBySeasonModel = EpisodeBySeasonModel()
+
+    ) {
         coEvery { getShowByIdUseCase(any()) } returns Resource(
                 status = Status.SUCCESS,
                 data = detail,
+                message = null
+        )
+
+        coEvery { getEpisodeByShow(any()) } returns Resource(
+                status = Status.SUCCESS,
+                data = episodeBySeasonModel,
                 message = null
         )
     }

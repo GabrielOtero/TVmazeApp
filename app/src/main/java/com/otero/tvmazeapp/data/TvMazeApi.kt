@@ -1,5 +1,6 @@
 package com.otero.tvmazeapp.data
 
+import com.otero.tvmazeapp.data.dto.EpisodeDto
 import com.otero.tvmazeapp.data.dto.TvShowDetailDto
 import com.otero.tvmazeapp.data.dto.TvShowDto
 import com.otero.tvmazeapp.data.dto.TvShowSearchDto
@@ -16,4 +17,7 @@ interface TvMazeApi {
 
     @GET("shows/{id}")
     suspend fun getTvShowById(@Path("id") id: Int): TvShowDetailDto
+
+    @GET("shows/{id}/episodes")
+    suspend fun getTvEpisodesByShowId(@Path("id") id: Int): List<EpisodeDto>
 }

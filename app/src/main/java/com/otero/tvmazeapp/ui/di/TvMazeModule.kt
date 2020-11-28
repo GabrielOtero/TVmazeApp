@@ -4,11 +4,16 @@ import com.otero.tvmazeapp.BuildConfig
 import com.otero.tvmazeapp.BuildConfig.API_END_POINT
 import com.otero.tvmazeapp.data.ResponseHandler
 import com.otero.tvmazeapp.data.TvMazeApi
+import com.otero.tvmazeapp.data.datasource.EpisodeRemoteDataSource
+import com.otero.tvmazeapp.data.datasource.EpisodeRemoteDataSourceImpl
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSourceImpl
+import com.otero.tvmazeapp.data.mapper.EpisodeDtoToEpisodeModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowDetailDtoToTvShowDetailModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
+import com.otero.tvmazeapp.data.repository.EpisodeRepository
+import com.otero.tvmazeapp.data.repository.EpisodeRepositoryImpl
 import com.otero.tvmazeapp.data.repository.TvShowRepository
 import com.otero.tvmazeapp.data.repository.TvShowRepositoryImpl
 import com.otero.tvmazeapp.domain.usecase.*
@@ -39,8 +44,13 @@ val tvMazeModule = module {
     viewModel {
         TvShowDetailViewModel(
                 get<GetTvShowByIdUseCase>(),
+                get<GetEpisodeByShowUseCase>(),
                 get<TvShowDetailViewState>()
         )
+    }
+
+    factory {
+        GetEpisodeByShow(get<EpisodeRepository>()) as GetEpisodeByShowUseCase
     }
 
     factory {
@@ -53,6 +63,10 @@ val tvMazeModule = module {
 
     factory {
         GetTvShowByText(get<TvShowRepository>()) as GetTvShowByTextUseCase
+    }
+
+    factory {
+        EpisodeRepositoryImpl(get<EpisodeRemoteDataSource>()) as EpisodeRepository
     }
 
     factory {
@@ -70,6 +84,14 @@ val tvMazeModule = module {
     }
 
     factory {
+        EpisodeRemoteDataSourceImpl(
+                get<TvMazeApi>(),
+                get<ResponseHandler>(),
+                get<EpisodeDtoToEpisodeModelMapper>()
+        ) as EpisodeRemoteDataSource
+    }
+
+    factory {
         ResponseHandler()
     }
 
@@ -83,6 +105,10 @@ val tvMazeModule = module {
 
     factory {
         TvShowDetailDtoToTvShowDetailModelMapper()
+    }
+
+    factory {
+        EpisodeDtoToEpisodeModelMapper()
     }
 
     factory {
