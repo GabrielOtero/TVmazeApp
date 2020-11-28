@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.data.repository
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.datasource.EpisodeRemoteDataSource
+import com.otero.tvmazeapp.data.dto.ImageDto
 import com.otero.tvmazeapp.domain.model.EpisodeModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,7 +30,7 @@ class EpisodeRepositoryTest {
     }
 
 
-    private fun prepareScenario(list: List<EpisodeModel> = listOf(EpisodeModel(1, 1, ""))) {
+    private fun prepareScenario(list: List<EpisodeModel> = listOf(EpisodeModel(1, 1, "", 0, "", ""))) {
         coEvery { episodeRemoteDataSource.getTvEpisodesByShowId(any()) } returns Resource(
                 status = Status.SUCCESS,
                 data = list,

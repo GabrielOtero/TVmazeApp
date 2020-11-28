@@ -59,7 +59,7 @@ class TvShowDetailViewModelTest {
     fun dispatchAction_loadEpisodes_actionTvShowEpisodes() = runBlockingTest {
         val id = Random(currentTime).nextInt()
         val detail = TvShowDetailModel(id, "", "", emptyList(), ScheduleModel("", emptyList()), "")
-        val episodeBySeasonModel = EpisodeBySeasonModel(mutableListOf(EpisodeItemResult(1,"")))
+        val episodeBySeasonModel = EpisodeBySeasonModel(mutableListOf(EpisodeItemResult(1,"", 0,0 ,"", "")))
         prepareScenario(detail, episodeBySeasonModel)
 
         viewModel.dispatchViewAction(TvShowDetailViewAction.LoadEpisodes(id))

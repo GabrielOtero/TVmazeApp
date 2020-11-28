@@ -5,8 +5,11 @@ import com.otero.tvmazeapp.domain.model.EpisodeModel
 
 class EpisodeDtoToEpisodeModelMapper : BaseMapper<EpisodeDto, EpisodeModel>() {
     override fun mapFrom(from: EpisodeDto) = EpisodeModel(
-            id = from.id,
-            season = from.season,
-            name = from.name
+        id = from.id,
+        season = from.season ?: 0,
+        name = from.name ?: "",
+        number = from.number ?: 0,
+        summary = from.summary ?: "",
+        image = from.image?.medium ?: ""
     )
 }

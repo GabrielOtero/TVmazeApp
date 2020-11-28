@@ -46,7 +46,7 @@ class TvShowAdapter(
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private var tvShowName: TextView = itemView.findViewById(R.id.tv_show_name)
     private var tvShowCard: ConstraintLayout = itemView.findViewById(R.id.tv_show_card)
-    private var tvShowPoster: ImageView = itemView.findViewById(R.id.tv_show_poster)
+    private var tvShowPoster: ImageView = itemView.findViewById(R.id.episode_poster)
 
     fun bind(
         item: TvShowModel,

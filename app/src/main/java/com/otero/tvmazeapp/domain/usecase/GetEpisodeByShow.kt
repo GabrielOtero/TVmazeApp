@@ -19,7 +19,14 @@ class GetEpisodeByShow(
                 val data = tvEpisodesByShowId.data.groupBy { it.season }
                 for (k in data.keys) {
                     val elements = data[k]?.map {
-                        EpisodeItemResult(it.id, it.name)
+                        EpisodeItemResult(
+                            id = it.id,
+                            name = it.name,
+                            number = it.number,
+                            season = it.season,
+                            summary = it.summary,
+                            image = it.image
+                        )
                     } ?: emptyList()
 
                     episodeBySeasonUiModel.list.add(SeasonHeader(k))

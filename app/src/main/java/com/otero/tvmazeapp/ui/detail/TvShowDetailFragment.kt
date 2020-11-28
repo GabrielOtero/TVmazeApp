@@ -24,7 +24,10 @@ class TvShowDetailFragment : Fragment() {
 
     private val listAdapter by lazy {
         EpisodeListAdapter(
-                cardClickListener = { }
+                cardClickListener = {
+                    val ft = childFragmentManager.beginTransaction()
+                    EpisodeDetailFragment.newInstance(it).show(ft, "Dialog")
+                }
         )
     }
 
@@ -77,16 +80,16 @@ class TvShowDetailFragment : Fragment() {
         tvShowModel?.let {
             Glide.with(this)
                     .load(tvShowModel.image.replace("http", "https"))
-                    .into(tv_show_poster)
+                    .into(episode_poster)
             tv_show_name.text = tvShowModel.name
 
-            tv_show_genres.text = getString(R.string.tv_show_detail_genres_string,
+            episode_number.text = getString(R.string.tv_show_detail_genres_string,
                     tvShowModel.genres.joinToString(", "))
-            tv_show_schedule.text =
+            episode_season.text =
                     getString(R.string.tv_show_detail_schedule_string,
                             tvShowModel.schedule.time, tvShowModel.schedule.days
                             .joinToString(", "))
-            tv_show_summary.text = HtmlCompat.fromHtml(tvShowModel.summary,
+            episode_summary.text = HtmlCompat.fromHtml(tvShowModel.summary,
                     HtmlCompat.FROM_HTML_MODE_COMPACT)
 
             val id = arguments?.getInt(ID_KEY)

@@ -15,7 +15,7 @@ import com.otero.tvmazeapp.domain.model.ResultType
 import com.otero.tvmazeapp.domain.model.SeasonHeader
 
 class EpisodeListAdapter(
-        private val cardClickListener: (Int) -> Unit
+        private val cardClickListener: (EpisodeItemResult) -> Unit
 ) :
         ListAdapter<EpisodeItemResult, RecyclerView.ViewHolder>(ParticipantRulesDiffcalback()) {
 
@@ -45,7 +45,7 @@ class EpisodeListAdapter(
         if (item.resultType == ResultType.EPISODE) {
             (holder as EpisodeViewHolder).bind(item, cardClickListener)
         } else {
-            (holder as SeasonTitleViewHolder).bind((item as SeasonHeader).number)
+            (holder as SeasonTitleViewHolder).bind((item as SeasonHeader).seasonNumber)
         }
     }
 
@@ -74,10 +74,10 @@ class EpisodeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(
             item: EpisodeItemResult,
-            cardClickListener: (Int) -> Unit
+            cardClickListener: (EpisodeItemResult) -> Unit
     ) {
         tvShowName.text = item.name
-        tvShowCard.setOnClickListener { cardClickListener(item.id) }
+        tvShowCard.setOnClickListener { cardClickListener(item) }
     }
 }
 

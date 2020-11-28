@@ -24,9 +24,11 @@ class GetEpisodeByShowUseCaseTest {
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {
-        val list = listOf(EpisodeModel(1, 1, ""),
-                EpisodeModel(2, 1, ""),
-                EpisodeModel(3, 2, ""))
+        val list = listOf(
+            EpisodeModel(1, 1, "", 0, "", ""),
+            EpisodeModel(2, 1, "", 0, "", ""),
+            EpisodeModel(3, 2, "", 0, "", "")
+        )
         prepareScenario(list)
         val id = Random(currentTime).nextInt()
 
@@ -35,7 +37,7 @@ class GetEpisodeByShowUseCaseTest {
         assertEquals(5, episodeByShow.data?.list?.size)
 
         assertEquals(ResultType.SEASON_HEADER, episodeByShow.data?.list?.get(0)?.resultType)
-        assertEquals(1, (episodeByShow.data?.list?.get(0) as SeasonHeader).number)
+        assertEquals(1, (episodeByShow.data?.list?.get(0) as SeasonHeader).seasonNumber)
 
         assertEquals(ResultType.EPISODE, episodeByShow.data?.list?.get(1)?.resultType)
         assertEquals(1, (episodeByShow.data?.list?.get(1) as EpisodeItemResult).id)
@@ -44,7 +46,7 @@ class GetEpisodeByShowUseCaseTest {
         assertEquals(2, (episodeByShow.data?.list?.get(2) as EpisodeItemResult).id)
 
         assertEquals(ResultType.SEASON_HEADER, episodeByShow.data?.list?.get(3)?.resultType)
-        assertEquals(2, (episodeByShow.data?.list?.get(3) as SeasonHeader).number)
+        assertEquals(2, (episodeByShow.data?.list?.get(3) as SeasonHeader).seasonNumber)
 
         assertEquals(ResultType.EPISODE, episodeByShow.data?.list?.get(4)?.resultType)
         assertEquals(3, (episodeByShow.data?.list?.get(4) as EpisodeItemResult).id)
@@ -52,11 +54,11 @@ class GetEpisodeByShowUseCaseTest {
         coVerify(exactly = 1) { episodeRepository.getTvEpisodesByShowId(id) }
     }
 
-    private fun prepareScenario(list: List<EpisodeModel> = listOf(EpisodeModel(1, 1, ""))) {
+    private fun prepareScenario(list: List<EpisodeModel> = listOf(EpisodeModel(1, 1, "",0, "", ""))) {
         coEvery { episodeRepository.getTvEpisodesByShowId(any()) } returns Resource(
-                status = Status.SUCCESS,
-                data = list,
-                message = null
+            status = Status.SUCCESS,
+            data = list,
+            message = null
         )
     }
 }

@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.data.datasource
 import com.otero.tvmazeapp.data.ResponseHandler
 import com.otero.tvmazeapp.data.TvMazeApi
 import com.otero.tvmazeapp.data.dto.EpisodeDto
+import com.otero.tvmazeapp.data.dto.ImageDto
 import com.otero.tvmazeapp.data.mapper.EpisodeDtoToEpisodeModelMapper
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,7 +23,7 @@ class EpisodeRemoteDataSourceTest {
 
     @Test
     fun getShowsByPage_returnSucessResult() = runBlocking {
-        prepareScenario(listOf(EpisodeDto(1, 1, "")))
+        prepareScenario(listOf(EpisodeDto(1, 1, "", 0, "", ImageDto(""))))
 
         episodeRemoteDataSourceImpl.getTvEpisodesByShowId(1)
 
