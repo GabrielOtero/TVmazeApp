@@ -5,6 +5,10 @@ website.
 
 You can find the API [here](https://www.tvmaze.com/api).
 
+|Sample|
+|---|
+|![sample](https://user-images.githubusercontent.com/2881903/101552320-6ad02880-3991-11eb-9df2-380cb165c0f9.gif)|
+
 ## Features
  - List all of the series contained in the API used by the paging scheme provided by the
 API.
