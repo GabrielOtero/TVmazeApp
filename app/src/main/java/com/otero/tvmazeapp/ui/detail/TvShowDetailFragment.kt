@@ -90,7 +90,7 @@ class TvShowDetailFragment : Fragment(), View.OnClickListener {
         showLoading(false)
         tvShowModel?.let {
             Glide.with(this)
-                .load(tvShowModel.image.replace("http", "https"))
+                .load(tvShowModel.image)
                 .into(episode_poster)
             tv_show_name.text = tvShowModel.name
 

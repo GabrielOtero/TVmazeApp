@@ -46,7 +46,7 @@ class EpisodeDetailFragment : DialogFragment() {
                     HtmlCompat.FROM_HTML_MODE_COMPACT)
 
                 Glide.with(this)
-                    .load(episode.image.replace("http", "https"))
+                    .load(episode.image)
                     .into(episode_poster)
             }
         }

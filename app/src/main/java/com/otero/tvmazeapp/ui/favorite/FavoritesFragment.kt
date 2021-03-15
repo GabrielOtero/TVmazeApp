@@ -80,7 +80,7 @@ class FavoritesFragment : Fragment() {
     private fun loadCardImage(image: String, imageView: ImageView) {
         Glide
             .with(this)
-            .load(image.replace("http", "https"))
+            .load(image)
             .into(imageView)
     }
 
