@@ -5,12 +5,12 @@ import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.datasource.TvShowLocalDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowPagingDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
+import com.otero.tvmazeapp.domain.model.PagedTvShowListModel
 import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.*
 import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
@@ -22,7 +22,7 @@ class TvShowRepositoryTest {
     private val tvShowRemoteDataSource = mockk<TvShowRemoteDataSource>()
     private val tvShowLocalDataSource = mockk<TvShowLocalDataSource>()
     private val tvShowPagingDataSource = mockk<TvShowPagingDataSource>()
-    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource, tvShowLocalDataSource, tvShowPagingDataSource)
+    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource, tvShowLocalDataSource)
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {
@@ -31,7 +31,6 @@ class TvShowRepositoryTest {
         val tvShowPagingDataSource = tvShowRepository.getTvShowsByPage()
 
         assertNotNull(tvShowPagingDataSource)
-        assertTrue(tvShowPagingDataSource is TvShowPagingDataSource)
     }
 
     @Test
@@ -98,16 +97,11 @@ class TvShowRepositoryTest {
             detail : TvShowDetailModel = TvShowDetailModel(1, "", "", emptyList(),
                     ScheduleModel("", emptyList()), ""),
             tvShowModel: TvShowModel = TvShowModel(1, "", "")) {
-        coEvery { tvShowRemoteDataSource.getShowsByPage(any()) } returns Resource(
-            status = Status.SUCCESS,
-            data = list,
-            message = null
-        )
 
         coEvery { tvShowRemoteDataSource.getTvShowsByText(any()) } returns Resource(
-            status = Status.SUCCESS,
-            data = list,
-            message = null
+                status = Status.SUCCESS,
+                data = list,
+                message = null
         )
 
         coEvery { tvShowRemoteDataSource.getTvShowById(any()) } returns Resource(
@@ -116,9 +110,13 @@ class TvShowRepositoryTest {
                 message = null
         )
 
+        coEvery { tvShowRemoteDataSource.getPagedShows() } returns TvShowPagingDataSource { PagedTvShowListModel() }
+
+
         coEvery { tvShowLocalDataSource.insertTvShow(any()) } just Runs
         coEvery { tvShowLocalDataSource.getById(any()) } returns tvShowModel
         coEvery { tvShowLocalDataSource.removeTvShow(any()) } just Runs
-        coEvery { tvShowLocalDataSource.getAllTvShow() } returns list
+
+        coEvery { tvShowLocalDataSource.getAllTvShow() } returns TvShowPagingDataSource { PagedTvShowListModel() }
     }
 }

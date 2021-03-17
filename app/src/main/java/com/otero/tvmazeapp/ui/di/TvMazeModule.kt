@@ -84,8 +84,7 @@ val tvMazeModule = module {
 
     factory {
         GetFavoriteList(
-            get<TvShowRepository>(),
-            get<DispatcherProvider>()
+            get<TvShowRepository>()
         ) as GetFavoriteListUseCase
     }
 
@@ -119,8 +118,7 @@ val tvMazeModule = module {
     factory {
         TvShowRepositoryImpl(
             get<TvShowRemoteDataSource>(),
-            get<TvShowLocalDataSource>(),
-            get<TvShowPagingDataSource>()
+            get<TvShowLocalDataSource>()
         ) as TvShowRepository
     }
 
@@ -147,14 +145,6 @@ val tvMazeModule = module {
             get<ResponseHandler>(),
             get<EpisodeDtoToEpisodeModelMapper>()
         ) as EpisodeRemoteDataSource
-    }
-
-    factory {
-        TvShowPagingDataSourceImpl(
-            get<TvMazeApi>(),
-            get<TvShowDtoToTvShowModelMapper>(),
-            get<ResponseHandler>()
-        ) as TvShowPagingDataSource
     }
 
     factory {

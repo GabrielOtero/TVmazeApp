@@ -12,6 +12,7 @@ import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
@@ -31,9 +32,9 @@ class TvShowRemoteDataSourceTest {
     fun getShowsByPage_returnSucessResult() = runBlocking {
         prepareScenario(listOf(TvShowDto(1, null, null)))
 
-        tvShowRemoteDataSource.getShowsByPage(1)
+        val tvShowPagingDataSource = tvShowRemoteDataSource.getPagedShows()
+        assertNotNull(tvShowPagingDataSource)
 
-        coVerify(exactly = 1) { api.getShowsByPage(1) }
     }
 
     @Test

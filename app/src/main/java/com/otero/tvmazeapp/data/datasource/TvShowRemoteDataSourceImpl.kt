@@ -2,12 +2,16 @@ package com.otero.tvmazeapp.data.datasource
 
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.ResponseHandler
+import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.TvMazeApi
 import com.otero.tvmazeapp.data.mapper.TvShowDetailDtoToTvShowDetailModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
+import com.otero.tvmazeapp.domain.model.PagedTvShowListModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TvShowRemoteDataSourceImpl(
         private val api: TvMazeApi,
@@ -16,7 +20,21 @@ class TvShowRemoteDataSourceImpl(
         private val tvShowSearchDtoToTvShowModelMapper: TvShowSearchDtoToTvShowModelMapper,
         private val tvShowDetailDtoToTvShowDetailModelMapper: TvShowDetailDtoToTvShowDetailModelMapper
 ) : TvShowRemoteDataSource {
-    override suspend fun getShowsByPage(page: Int): Resource<List<TvShowModel>> {
+
+    override fun getPagedShows(): TvShowPagingDataSource {
+        return TvShowPagingDataSource { page ->
+            withContext(Dispatchers.IO) {
+                val result = loadTvShow(page)
+                if (result.status == Status.SUCCESS)
+                    PagedTvShowListModel(result.data ?: emptyList(), hasMore = true)
+                else
+                    PagedTvShowListModel(emptyList())
+            }
+        }
+    }
+
+
+    private suspend fun loadTvShow(page: Int): Resource<List<TvShowModel>> {
         return try {
             val response = api.getShowsByPage(page)
             return responseHandler.handleSuccess(tvShowModelMapperTv.mapFrom(response))

@@ -6,6 +6,7 @@ import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
@@ -18,18 +19,16 @@ class GetFavoriteListUseCaseTest {
     val coroutinesTestRule = CoroutinesTestRule()
 
     private val tvShowRepository = mockk<TvShowRepository>()
-    private val getFavoriteList = GetFavoriteList(tvShowRepository, coroutinesTestRule.testDispatcherProvider)
+    private val getFavoriteList = GetFavoriteList(tvShowRepository)
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {
         prepareScenario()
 
-        getFavoriteList()
-
-        coVerify(exactly = 1) { tvShowRepository.getAllFavoriteTvShow() }
+        val favoriteList = getFavoriteList()
+        assertNotNull(favoriteList)
     }
 
     private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
-        coEvery { tvShowRepository.getAllFavoriteTvShow() } returns list
     }
 }

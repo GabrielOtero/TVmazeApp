@@ -1,32 +1,31 @@
 package com.otero.tvmazeapp.ui.favorite
 
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.otero.tvmazeapp.domain.model.TvShowModel
 import com.otero.tvmazeapp.domain.usecase.interfaces.GetFavoriteListUseCase
 import com.otero.tvmazeapp.ui.base.BaseViewModel
-import kotlinx.coroutines.launch
 
 class FavoriteViewModel(
     private val getFavoriteListUseCase: GetFavoriteListUseCase,
     override val viewState: FavoriteViewState
 ) : BaseViewModel<FavoriteViewState, FavoriteViewAction>() {
 
+    val tvShowList: LiveData<PagedList<TvShowModel>>
+
+    init {
+
+        val pagingConfig = PagedList.Config.Builder().setPageSize(30).build()
+        tvShowList = LivePagedListBuilder(getFavoriteListUseCase(), pagingConfig).build()
+    }
+
     override fun dispatchViewAction(viewAction: FavoriteViewAction) {
         when (viewAction) {
             is FavoriteViewAction.CardClick -> cardClick(viewAction.id)
-            FavoriteViewAction.LoadFavorites -> loadFavorites()
         }
     }
 
-    private fun loadFavorites() {
-        viewModelScope.launch {
-            val list = getFavoriteListUseCase()
-            if (list.isNullOrEmpty()) {
-                viewState.action.postValue(FavoriteViewState.Action.ShowEmptyState)
-            } else {
-                viewState.action.postValue(FavoriteViewState.Action.ShowTvShowList(list))
-            }
-        }
-    }
 
     private fun cardClick(id: Int) {
         viewState.action.postValue(FavoriteViewState.Action.GoToTvShowDetail(id))

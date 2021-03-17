@@ -3,7 +3,10 @@ package com.otero.tvmazeapp.data.datasource
 import com.otero.tvmazeapp.data.database.AppDatabase
 import com.otero.tvmazeapp.data.dbo.TvShowDbo
 import com.otero.tvmazeapp.data.mapper.TvShowDboToTvShowModelMapper
+import com.otero.tvmazeapp.domain.model.PagedTvShowListModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TvShowLocalDataSourceImpl(
     private val appDatabase: AppDatabase,
@@ -30,9 +33,12 @@ class TvShowLocalDataSourceImpl(
         appDatabase.tvShowDao().delete(id)
     }
 
-    override suspend fun getAllTvShow(): List<TvShowModel> {
-        return appDatabase.tvShowDao().getAll().map {
-            tvShowDboToTvShowModel.mapFrom(it)
+    override fun getAllTvShow(): TvShowPagingDataSource {
+        return TvShowPagingDataSource {
+            withContext(Dispatchers.IO) {
+                val result = appDatabase.tvShowDao().getAll()
+                PagedTvShowListModel(tvShowDboToTvShowModel.mapFrom(result))
+            }
         }
     }
 }

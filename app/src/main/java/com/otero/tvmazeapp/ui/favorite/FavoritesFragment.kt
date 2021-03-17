@@ -42,6 +42,7 @@ class FavoritesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         observeViewState()
+        observeTvShowsList()
         return inflater.inflate(R.layout.fragment_favorite, container, false)
     }
 
@@ -57,16 +58,22 @@ class FavoritesFragment : Fragment() {
 
     private fun observeViewState() {
         favoriteViewModel.viewState.action.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it) {
-                    is FavoriteViewState.Action.ShowEmptyState -> showEmptyState()
-                    is FavoriteViewState.Action.ShowLoading -> showLoading()
-                    is FavoriteViewState.Action.ShowTvShowList -> showList(it.list)
-                    is FavoriteViewState.Action.GoToTvShowDetail -> goToTvShowDetail(it.id)
+                viewLifecycleOwner,
+                Observer {
+                    when (it) {
+                        is FavoriteViewState.Action.ShowEmptyState -> showEmptyState()
+                        is FavoriteViewState.Action.ShowLoading -> showLoading()
+                        is FavoriteViewState.Action.ShowTvShowList -> showList(it.list)
+                        is FavoriteViewState.Action.GoToTvShowDetail -> goToTvShowDetail(it.id)
+                    }
                 }
-            }
         )
+    }
+
+    private fun observeTvShowsList() {
+        favoriteViewModel.tvShowList.observe(viewLifecycleOwner, Observer { articles ->
+            listAdapter.submitList(articles)
+        })
     }
 
     private fun goToTvShowDetail(id: Int) {

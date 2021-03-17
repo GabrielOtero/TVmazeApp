@@ -36,7 +36,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         observeViewState()
-        observeArticles()
+        observeTvShowsList()
         return root
     }
 
@@ -66,8 +66,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun observeArticles() {
-        homeViewModel.articles.observe(viewLifecycleOwner, Observer { articles ->
+    private fun observeTvShowsList() {
+        homeViewModel.tvShowList.observe(viewLifecycleOwner, Observer { articles ->
             listAdapter.submitList(articles)
         })
     }

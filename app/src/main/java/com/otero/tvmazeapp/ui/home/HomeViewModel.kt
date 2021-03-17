@@ -16,14 +16,14 @@ class HomeViewModel(
     override val viewState: HomeViewState
 ) : BaseViewModel<HomeViewState, HomeViewAction>() {
 
-    val articles: LiveData<PagedList<TvShowModel>>
+    val tvShowList: LiveData<PagedList<TvShowModel>>
 
     init {
         viewState.action.postValue(HomeViewState.Action.ShowLoading)
 
 
         val pagingConfig = PagedList.Config.Builder().setPageSize(30).build()
-        articles = LivePagedListBuilder(getTvShowPaged(), pagingConfig).build()
+        tvShowList = LivePagedListBuilder(getTvShowPaged(), pagingConfig).build()
     }
 
     override fun dispatchViewAction(viewAction: HomeViewAction) {

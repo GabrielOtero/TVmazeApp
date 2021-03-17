@@ -6,6 +6,7 @@ import com.otero.tvmazeapp.data.dbo.TvShowDbo
 import com.otero.tvmazeapp.data.mapper.TvShowDboToTvShowModelMapper
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.*
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
@@ -63,11 +64,9 @@ class TvShowLocalDataSourceTest {
     fun getAllTvShow_returnSucessResult() = runBlocking {
         prepareScenario()
 
-        tvShowDataSource.getAllTvShow()
+        val tvShowPagingDataSource = tvShowDataSource.getAllTvShow()
 
-        coVerify(exactly = 1) {
-            database.tvShowDao().getAll()
-        }
+        assertNotNull(tvShowPagingDataSource)
     }
 
     private fun prepareScenario(tvDbo: TvShowDbo? = TvShowDbo(1, "", ""),

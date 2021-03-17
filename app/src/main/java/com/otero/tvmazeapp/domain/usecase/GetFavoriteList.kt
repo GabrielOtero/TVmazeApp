@@ -1,14 +1,14 @@
 package com.otero.tvmazeapp.domain.usecase
 
+import androidx.paging.DataSource
 import com.otero.tvmazeapp.data.repository.TvShowRepository
-import com.otero.tvmazeapp.data.utils.DispatcherProvider
+import com.otero.tvmazeapp.domain.model.TvShowModel
 import com.otero.tvmazeapp.domain.usecase.interfaces.GetFavoriteListUseCase
-import kotlinx.coroutines.withContext
 
 class GetFavoriteList(
-    private val tvShowRepository: TvShowRepository,
-    private val dispatchers: DispatcherProvider
+    private val tvShowRepository: TvShowRepository
 ) : GetFavoriteListUseCase {
-    override suspend fun invoke() =
-        withContext(dispatchers.io()) { tvShowRepository.getAllFavoriteTvShow() }
+    override fun invoke() = object : DataSource.Factory<Int, TvShowModel>() {
+        override fun create() = tvShowRepository.getAllFavoriteTvShow()
+    }
 }
