@@ -3,32 +3,35 @@ package com.otero.tvmazeapp.data.repository
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.Status
 import com.otero.tvmazeapp.data.datasource.TvShowLocalDataSource
+import com.otero.tvmazeapp.data.datasource.TvShowPagingDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.domain.model.ScheduleModel
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
 import io.mockk.*
+import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import java.util.*
-import kotlin.collections.RandomAccess
 
 @ExperimentalCoroutinesApi
 class TvShowRepositoryTest {
 
     private val tvShowRemoteDataSource = mockk<TvShowRemoteDataSource>()
     private val tvShowLocalDataSource = mockk<TvShowLocalDataSource>()
-    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource, tvShowLocalDataSource)
+    private val tvShowPagingDataSource = mockk<TvShowPagingDataSource>()
+    private val tvShowRepository = TvShowRepositoryImpl(tvShowRemoteDataSource, tvShowLocalDataSource, tvShowPagingDataSource)
 
     @Test
     fun callGetShowByPage_shouldReturnListTvShowModel() = runBlockingTest {
         prepareScenario()
-        val page = Random(currentTime).nextInt()
 
-        tvShowRepository.getTvShowsByPage(page)
+        val tvShowPagingDataSource = tvShowRepository.getTvShowsByPage()
 
-        coVerify(exactly = 1) { tvShowRemoteDataSource.getShowsByPage(page) }
+        assertNotNull(tvShowPagingDataSource)
+        assertTrue(tvShowPagingDataSource is TvShowPagingDataSource)
     }
 
     @Test

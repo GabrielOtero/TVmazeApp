@@ -1,10 +1,17 @@
 package com.otero.tvmazeapp.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.paging.DataSource
 import com.otero.tvmazeapp.data.Resource
+import com.otero.tvmazeapp.data.ResponseHandler
 import com.otero.tvmazeapp.data.Status
+import com.otero.tvmazeapp.data.TvMazeApi
+import com.otero.tvmazeapp.data.datasource.TvShowPagingDataSourceImpl
+import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
+import com.otero.tvmazeapp.data.repository.TvShowRepository
 import com.otero.tvmazeapp.domain.model.TvShowModel
-import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByPageUseCase
+import com.otero.tvmazeapp.domain.usecase.GetTvShowPaged
+import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowPagedUseCase
 import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByTextUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,8 +32,9 @@ class HomeViewModelTest {
     @get:Rule
     val instantTask = InstantTaskExecutorRule()
 
-    private val getShowByPageUseCase = mockk<GetTvShowByPageUseCase>()
+    private val getShowByPageUseCase = mockk<GetTvShowPagedUseCase>()
     private val getTvShowByTextUseCase = mockk<GetTvShowByTextUseCase>()
+    private val tvShowRepository = mockk<TvShowRepository>()
     private val viewState = spyk(HomeViewState())
 
     private val viewModel by lazy {
@@ -39,19 +47,6 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun dispatchAction_paginate_actionTvShowList() = runBlockingTest {
-        val list = listOf(TvShowModel(1, "", ""), TvShowModel(2, "", ""))
-        prepareScenario(list)
-
-        viewModel.dispatchViewAction(HomeViewAction.Paginate(0))
-
-        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.ShowTvShowList)
-        assertEquals(
-            list, (viewModel.viewState.action.value as HomeViewState.Action.ShowTvShowList).list
-        )
-    }
-
-    @Test
     fun dispatchAction_cardClick_actionTvShowList() = runBlockingTest {
         val id = 1
         prepareScenario()
@@ -61,19 +56,6 @@ class HomeViewModelTest {
         assertTrue(viewModel.viewState.action.value is HomeViewState.Action.GoToTvShowDetail)
         assertEquals(
             id, (viewModel.viewState.action.value as HomeViewState.Action.GoToTvShowDetail).id
-        )
-    }
-
-    @Test
-    fun dispatchAction_textSearchClick_emptyString_actionPaginate() = runBlockingTest {
-        val list = listOf(TvShowModel(1, "", ""), TvShowModel(2, "", ""))
-        prepareScenario(list)
-
-        viewModel.dispatchViewAction(HomeViewAction.TextSearchClick(""))
-
-        assertTrue(viewModel.viewState.action.value is HomeViewState.Action.ShowTvShowList)
-        assertEquals(
-            list, (viewModel.viewState.action.value as HomeViewState.Action.ShowTvShowList).list
         )
     }
 
@@ -101,16 +83,14 @@ class HomeViewModelTest {
     }
 
     private fun prepareScenario(list: List<TvShowModel> = listOf(TvShowModel(1, "", ""))) {
-        coEvery { getShowByPageUseCase(any()) } returns Resource(
-            status = Status.SUCCESS,
-            data = list,
-            message = null
-        )
-
         coEvery { getTvShowByTextUseCase(any()) } returns Resource(
             status = Status.SUCCESS,
             data = list,
             message = null
         )
+
+        coEvery { getShowByPageUseCase() } returns object : DataSource.Factory<Int, TvShowModel>() {
+            override fun create() = tvShowRepository.getTvShowsByPage()
+        }
     }
 }

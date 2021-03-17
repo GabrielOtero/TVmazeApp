@@ -37,7 +37,7 @@ const val KOIN_ROOM = "KOIN_ROOM"
 val tvMazeModule = module {
     viewModel {
         HomeViewModel(
-                get<GetTvShowByPageUseCase>(),
+                get<GetTvShowPagedUseCase>(),
                 get<GetTvShowByTextUseCase>(),
                 get<HomeViewState>()
         )
@@ -101,7 +101,7 @@ val tvMazeModule = module {
     }
 
     factory {
-        GetTvShowByPage(get<TvShowRepository>()) as GetTvShowByPageUseCase
+        GetTvShowPaged(get<TvShowRepository>()) as GetTvShowPagedUseCase
     }
 
     factory {
@@ -119,7 +119,8 @@ val tvMazeModule = module {
     factory {
         TvShowRepositoryImpl(
             get<TvShowRemoteDataSource>(),
-            get<TvShowLocalDataSource>()
+            get<TvShowLocalDataSource>(),
+            get<TvShowPagingDataSource>()
         ) as TvShowRepository
     }
 
@@ -146,6 +147,14 @@ val tvMazeModule = module {
             get<ResponseHandler>(),
             get<EpisodeDtoToEpisodeModelMapper>()
         ) as EpisodeRemoteDataSource
+    }
+
+    factory {
+        TvShowPagingDataSourceImpl(
+            get<TvMazeApi>(),
+            get<TvShowDtoToTvShowModelMapper>(),
+            get<ResponseHandler>()
+        ) as TvShowPagingDataSource
     }
 
     factory {

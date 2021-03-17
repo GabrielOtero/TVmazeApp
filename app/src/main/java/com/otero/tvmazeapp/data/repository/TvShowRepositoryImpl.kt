@@ -1,14 +1,16 @@
 package com.otero.tvmazeapp.data.repository
 
 import com.otero.tvmazeapp.data.datasource.TvShowLocalDataSource
+import com.otero.tvmazeapp.data.datasource.TvShowPagingDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.domain.model.TvShowModel
 
 class TvShowRepositoryImpl(
     private val tvShowRemote: TvShowRemoteDataSource,
-    private val tvShowLocal: TvShowLocalDataSource
+    private val tvShowLocal: TvShowLocalDataSource,
+    private val pagingDataSource: TvShowPagingDataSource
 ) : TvShowRepository {
-    override suspend fun getTvShowsByPage(page: Int) = tvShowRemote.getShowsByPage(page)
+    override fun getTvShowsByPage() = pagingDataSource
     override suspend fun getTvShowsByText(searchText: String) =
         tvShowRemote.getTvShowsByText(searchText)
     override suspend fun getTvShowById(id: Int) = tvShowRemote.getTvShowById(id)

@@ -74,7 +74,6 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun showList(list: List<TvShowModel>) {
-        listAdapter.submitList(list)
     }
 
     private fun loadCardImage(image: String, imageView: ImageView) {

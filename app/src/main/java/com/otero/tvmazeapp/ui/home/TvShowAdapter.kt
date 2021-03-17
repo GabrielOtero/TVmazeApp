@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.otero.tvmazeapp.R
 import com.otero.tvmazeapp.domain.model.TvShowModel
@@ -16,7 +16,7 @@ class TvShowAdapter(
     private val cardClickListener: (Int) -> Unit,
     private val loadImageCallback: (String, ImageView) -> Unit
 ) :
-    ListAdapter<TvShowModel, ViewHolder>(ParticipantRulesDiffcalback()) {
+    PagedListAdapter<TvShowModel, ViewHolder>(ParticipantRulesDiffcalback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -25,7 +25,10 @@ class TvShowAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), cardClickListener, loadImageCallback)
+        getItem(position)?.let { tvShowModel ->
+            holder.bind(tvShowModel, cardClickListener, loadImageCallback)
+        }
+
     }
 
     class ParticipantRulesDiffcalback : DiffUtil.ItemCallback<TvShowModel>() {

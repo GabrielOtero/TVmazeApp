@@ -11,7 +11,6 @@ class HomeViewState {
         object ShowEmptyState : Action()
         object ClearList : Action()
 
-        data class ShowTvShowList(val list: List<TvShowModel>?) : Action()
         data class ShowTvShowListByText(val list: List<TvShowModel>?) : Action()
         data class GoToTvShowDetail(val id: Int) : Action()
     }
