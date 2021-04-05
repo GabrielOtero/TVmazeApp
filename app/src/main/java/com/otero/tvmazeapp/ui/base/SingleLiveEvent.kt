@@ -1,6 +1,5 @@
 package com.otero.tvmazeapp.ui.base
 
-import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -30,12 +29,8 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
     }
 
     @MainThread
-    fun call() {
-        value = value
-    }
-
-    @AnyThread
-    fun postCall() {
-        postValue(value)
+    override fun postValue(value: T) {
+        pending.set(true)
+        super.postValue(value)
     }
 }
