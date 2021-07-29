@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByPageUseCase
 import com.otero.tvmazeapp.domain.usecase.interfaces.GetTvShowByTextUseCase
 import com.otero.tvmazeapp.ui.base.BaseViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -16,7 +18,12 @@ class HomeViewModel(
         viewState.action.postValue(HomeViewState.Action.ShowLoading)
 
         viewModelScope.launch {
-            viewState.action.postValue(HomeViewState.Action.ShowTvShowList(getTvShowByPage().data))
+            getTvShowByPage.invokeRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewState.action.postValue(HomeViewState.Action.ShowTvShowList(it))
+                }
         }
     }
 

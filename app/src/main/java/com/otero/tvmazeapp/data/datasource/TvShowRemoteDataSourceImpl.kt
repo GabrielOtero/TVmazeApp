@@ -8,13 +8,16 @@ import com.otero.tvmazeapp.data.mapper.TvShowDtoToTvShowModelMapper
 import com.otero.tvmazeapp.data.mapper.TvShowSearchDtoToTvShowModelMapper
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
+import io.reactivex.Observable
+import io.reactivex.Scheduler
 
 class TvShowRemoteDataSourceImpl(
         private val api: TvMazeApi,
         private val responseHandler: ResponseHandler,
         private val tvShowModelMapperTv: TvShowDtoToTvShowModelMapper,
         private val tvShowSearchDtoToTvShowModelMapper: TvShowSearchDtoToTvShowModelMapper,
-        private val tvShowDetailDtoToTvShowDetailModelMapper: TvShowDetailDtoToTvShowDetailModelMapper
+        private val tvShowDetailDtoToTvShowDetailModelMapper: TvShowDetailDtoToTvShowDetailModelMapper,
+        private val ioScheduler: Scheduler
 ) : TvShowRemoteDataSource {
     override suspend fun getShowsByPage(page: Int): Resource<List<TvShowModel>> {
         return try {
@@ -40,6 +43,12 @@ class TvShowRemoteDataSourceImpl(
             return responseHandler.handleSuccess(tvShowDetailDtoToTvShowDetailModelMapper.mapFrom(response))
         } catch (e: Exception) {
             responseHandler.handleException(e)
+        }
+    }
+
+    override fun getShowsByPageRx(page: Int): Observable<List<TvShowModel>> {
+        return api.getShowsByPageRx(page).subscribeOn(ioScheduler).map {
+            tvShowModelMapperTv.mapFrom(it)
         }
     }
 

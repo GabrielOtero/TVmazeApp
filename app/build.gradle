@@ -86,6 +86,11 @@ dependencies {
     def junit_ext_version = "1.1.2"
 
 
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"

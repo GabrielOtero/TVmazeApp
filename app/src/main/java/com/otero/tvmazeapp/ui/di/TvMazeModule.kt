@@ -22,12 +22,14 @@ import com.otero.tvmazeapp.ui.favorite.FavoriteViewModel
 import com.otero.tvmazeapp.ui.favorite.FavoriteViewState
 import com.otero.tvmazeapp.ui.home.HomeViewModel
 import com.otero.tvmazeapp.ui.home.HomeViewState
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 const val KOIN_RETROFIT = "KOIN_RETROFIT"
@@ -129,7 +131,8 @@ val tvMazeModule = module {
             get<ResponseHandler>(),
             get<TvShowDtoToTvShowModelMapper>(),
             get<TvShowSearchDtoToTvShowModelMapper>(),
-            get<TvShowDetailDtoToTvShowDetailModelMapper>()
+            get<TvShowDetailDtoToTvShowDetailModelMapper>(),
+            Schedulers.io()
         ) as TvShowRemoteDataSource
     }
 
@@ -196,6 +199,7 @@ val tvMazeModule = module {
         Retrofit.Builder()
             .baseUrl(API_END_POINT)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(
                 OkHttpClient.Builder()
                     .addInterceptor(HttpLoggingInterceptor().apply {

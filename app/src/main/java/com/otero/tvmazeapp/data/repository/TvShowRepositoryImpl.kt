@@ -1,8 +1,10 @@
 package com.otero.tvmazeapp.data.repository
 
+import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.data.datasource.TvShowLocalDataSource
 import com.otero.tvmazeapp.data.datasource.TvShowRemoteDataSource
 import com.otero.tvmazeapp.domain.model.TvShowModel
+import io.reactivex.Observable
 
 class TvShowRepositoryImpl(
     private val tvShowRemote: TvShowRemoteDataSource,
@@ -17,4 +19,7 @@ class TvShowRepositoryImpl(
     override suspend fun getFavoriteTvShowById(id: Int) = tvShowLocal.getById(id)
     override suspend fun removeFavoriteTvShowById(id: Int) = tvShowLocal.removeTvShow(id)
     override suspend fun getAllFavoriteTvShow() = tvShowLocal.getAllTvShow()
+
+
+    override suspend fun getTvShowsByPageRx(page: Int) = tvShowRemote.getShowsByPageRx(page)
 }

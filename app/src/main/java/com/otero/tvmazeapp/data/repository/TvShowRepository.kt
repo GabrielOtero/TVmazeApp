@@ -3,6 +3,7 @@ package com.otero.tvmazeapp.data.repository
 import com.otero.tvmazeapp.data.Resource
 import com.otero.tvmazeapp.domain.model.TvShowDetailModel
 import com.otero.tvmazeapp.domain.model.TvShowModel
+import io.reactivex.Observable
 
 interface TvShowRepository {
     suspend fun getTvShowsByPage(page: Int = 0): Resource<List<TvShowModel>>
@@ -12,4 +13,6 @@ interface TvShowRepository {
     suspend fun getFavoriteTvShowById(id: Int) : TvShowModel?
     suspend fun removeFavoriteTvShowById(id: Int)
     suspend fun getAllFavoriteTvShow(): List<TvShowModel>?
+
+    suspend fun getTvShowsByPageRx(page: Int = 0): Observable<List<TvShowModel>>
 }
